@@ -1,0 +1,19 @@
+// Syntax error on or just before line 6
+begin 
+   int kw ; 
+   int wh9$jey ; 
+   while ( 961 ) 
+      if _AlZ ) 
+         newline ; 
+      else 
+         if ( _pdg ) 
+            newline ; 
+         else 
+            { 
+            } 
+   { 
+   } 
+   { 
+   } 
+   newline ; 
+end 

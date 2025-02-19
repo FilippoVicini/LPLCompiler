@@ -1,0 +1,11 @@
+// Syntax error on or just before line 8
+begin 
+   int _bz9xmpzn_YnIwwD ; 
+   { 
+      printch _rdj$ ; 
+      newline ; 
+   } 
+   } 
+   { 
+   } 
+end 

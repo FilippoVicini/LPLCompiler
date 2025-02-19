@@ -1,0 +1,12 @@
+// Syntax error on or just before line 9
+begin 
+   int r1Y ; 
+   newline ; 
+   { 
+   } 
+   newline ; 
+   newline ; 
+   ( _gT ) 
+      { 
+      } 
+end 

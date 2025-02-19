@@ -1,0 +1,13 @@
+// test_20_29.A
+begin
+   int _LxDcZ; 
+   int Q$2M; 
+   println 8793; 
+   {
+   }
+   if (Ia)
+      {
+      }
+   else 
+      newline; 
+end

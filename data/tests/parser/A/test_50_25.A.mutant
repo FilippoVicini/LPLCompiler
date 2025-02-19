@@ -1,0 +1,11 @@
+// Syntax error on or just before line 4
+begin 
+   
+      int J ; g7k ; int 
+   printch - 0 && - 20 ; 
+   while ( 0 ) 
+      newline ; 
+   while ( 659 ) 
+      newline ; 
+   newline ; 
+end 

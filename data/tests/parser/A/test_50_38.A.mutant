@@ -1,0 +1,13 @@
+// Syntax error on or just before line 3
+begin 
+   println + ; 
+   println _$ <= _v ; 
+   if ( ( e9Hi ) 056 92 ) 
+      { 
+         { 
+         } 
+         print V ; 
+      } 
+   else 
+      println 3 ; 
+end 

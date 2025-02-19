@@ -1,0 +1,14 @@
+// test_50_22.A
+begin
+   int _8b; 
+   print I || (0044); 
+   {
+      printch 2328177; 
+      {
+         newline; 
+      }
+   }
+   newline; 
+   printch _u == 981; 
+   newline; 
+end

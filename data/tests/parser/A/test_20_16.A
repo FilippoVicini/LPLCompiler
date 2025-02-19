@@ -1,0 +1,7 @@
+// test_20_16.A
+begin
+   int REfk; 
+   int _X; 
+   int by; 
+   newline; 
+end

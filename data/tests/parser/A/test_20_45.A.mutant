@@ -1,0 +1,10 @@
+// Syntax error on or just before line 9
+begin 
+   int _oz4 ; 
+   newline ; 
+   if ( _mYx_2m7O ) 
+      while ( 25745 ) 
+         { 
+         } 
+      newline ; 
+end 

@@ -1,0 +1,6 @@
+// Syntax error on or just before line 3
+begin 
+   int _zRB9TLFeb2 ; ; 
+   while ( 141 ) 
+      newline ; 
+end 

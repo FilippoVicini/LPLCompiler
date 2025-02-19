@@ -1,0 +1,8 @@
+// test_20_40.A
+begin
+   int n; 
+   if (25)
+      print __V; 
+   else 
+      newline; 
+end

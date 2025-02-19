@@ -1,0 +1,19 @@
+// Syntax error on or just before line 10
+begin 
+   int _6qC ; 
+   int U ; 
+   int xZ ; 
+   T = 2 / ( ik$ ) ; 
+   
+      { 
+      } 
+   } 
+   { 
+      print 59 ; 
+      { 
+      } 
+      { 
+      } 
+      newline ; 
+   } { 
+end 

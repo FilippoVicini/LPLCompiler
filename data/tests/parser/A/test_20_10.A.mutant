@@ -1,0 +1,10 @@
+// Syntax error on or just before line 5
+begin 
+   int Bk8Ocvpx$ ; 
+   println 
+   end ; 
+   newline ; 
+   { 
+   } 
+   { 
+   } _I 

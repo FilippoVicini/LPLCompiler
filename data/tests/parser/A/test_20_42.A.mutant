@@ -1,0 +1,15 @@
+// Syntax error on or just before line 4
+begin 
+   int _kvH_ ; 
+   _vav ; 
+   if ( O ) 
+      { int 
+      } 
+   else 
+      { 
+      } 
+   { 
+   } 
+   { 
+   } 
+end 

@@ -1,0 +1,15 @@
+// Syntax error on or just before line 6
+begin 
+   int Tp ; 
+   int y ; 
+   int 
+      { 
+      } ; 
+   int _a ; 
+   { 
+      printch 10 ; 
+   } 
+   { 
+   } 
+   print 82674 ; G0b 
+end 

@@ -1,0 +1,12 @@
+// test_20_18.A
+begin
+   int r1Y; 
+   newline; 
+   {
+   }
+   newline; 
+   newline; 
+   while (_gT)
+      {
+      }
+end

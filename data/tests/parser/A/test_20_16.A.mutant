@@ -1,0 +1,7 @@
+// Syntax error on or just before line 6
+begin 
+   int REfk ; 
+   int _X ; 
+   int by 
+   newline ; 
+end 

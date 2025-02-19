@@ -1,0 +1,11 @@
+// test_20_5.A
+begin
+   if (_k)
+      {
+      }
+   else 
+      newline; 
+   printch _fdbtxe; 
+   {
+   }
+end

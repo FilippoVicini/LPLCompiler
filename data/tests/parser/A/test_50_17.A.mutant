@@ -1,0 +1,18 @@
+// Syntax error on or just before line 5
+begin 
+   int DkLkmmWFOW_m ; 
+   int oT ; 
+   println ; 30342 
+   { 
+      if ( _Jz ) 
+         while ( XS ) 
+            newline ; 
+      else 
+         { 
+         } 
+      printch fN ; 
+      print 9 ; 
+   } 
+   { 
+   } 
+end 

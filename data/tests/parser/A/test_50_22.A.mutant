@@ -1,0 +1,14 @@
+// Syntax error on or just before line 6
+begin 
+   int _8b ; 
+   print I || ( 0044 ) ; 
+   { 
+      printch ; 
+      { 
+         newline ; 
+      } 
+   } 
+   newline ; 
+   printch _u == 981 ; 
+   newline ; 
+end 

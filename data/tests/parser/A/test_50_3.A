@@ -1,0 +1,19 @@
+// test_50_3.A
+begin
+   int _UKf_; 
+   int _9e; 
+   int __I1sgh; 
+   int _5; 
+   println 2; 
+   newline; 
+   if (8)
+      newline; 
+   else 
+      if (8276)
+         newline; 
+      else 
+         {
+         }
+   {
+   }
+end

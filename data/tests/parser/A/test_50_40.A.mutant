@@ -1,0 +1,17 @@
+// Syntax error on or just before line 6
+begin 
+   int _v ; 
+   int _gklKp ; 
+   int pv ; 
+   println ; 
+   newline ; 
+   println cMX ; 
+   printch 43 ; 
+   while ( 31 ) 
+      if ( 423 ) 
+         { 
+         } 
+      else 
+         { 
+         } 
+end 

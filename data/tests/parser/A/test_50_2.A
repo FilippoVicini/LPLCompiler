@@ -1,0 +1,18 @@
+// test_50_2.A
+begin
+   int _W1zc30lPv$w; 
+   int _vek$JXW; 
+   int _qg0_G; 
+   printch (65) <= 9; 
+   {
+   }
+   {
+   }
+   newline; 
+   if (tmu9psze)
+      {
+      }
+   else 
+      newline; 
+   newline; 
+end

@@ -1,0 +1,20 @@
+// Syntax error on or just before line 11
+begin 
+   if ( _k ) 
+      { 
+      } 
+   else 
+      newline ; 
+   printch _fdbtxe ; 
+   { 
+   } 
+end begin 
+   if ( _k ) 
+      { 
+      } 
+   else 
+      newline ; 
+   printch _fdbtxe ; 
+   { 
+   } 
+end 

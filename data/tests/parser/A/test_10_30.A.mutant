@@ -1,0 +1,6 @@
+// Syntax error on or just before line 3
+begin 
+   KXh SVh08 ; 
+   int _z ; 
+   int int ; 
+end 

@@ -1,0 +1,13 @@
+// Syntax error on or just before line 7
+begin 
+   int _W08P ; 
+   int w ; 
+   int _C ; 
+   int K ; 
+   print ( I I ) ; 
+   { 
+      { 
+      } 
+   } 
+   gRwA = 00 ; 
+end 

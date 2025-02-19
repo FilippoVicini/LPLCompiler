@@ -1,0 +1,16 @@
+// test_50_48.A
+begin
+   int _Cq6RK; 
+   int _yn; 
+   int _Uz; 
+   int _i; 
+   int _0; 
+   int _3mY; 
+   switch(14){
+   case 8: 
+      {
+      }
+   default : 
+      newline; 
+   }
+end

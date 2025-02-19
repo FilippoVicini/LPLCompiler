@@ -1,0 +1,9 @@
+//Z
+begin
+   int part;
+   int y;
+
+   part = 6 + y;
+   y = part - 3;
+   printch (part + y) * 10;
+end

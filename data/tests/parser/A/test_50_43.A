@@ -1,0 +1,12 @@
+// test_50_43.A
+begin
+   int _i; 
+   if (1)
+      println (5); 
+   else 
+      while (6)
+         _Y = 4414573 < (2); 
+   {
+   }
+   newline; 
+end

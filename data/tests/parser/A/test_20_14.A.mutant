@@ -1,0 +1,11 @@
+// Syntax error on or just before line 4
+begin 
+   int S ; 
+   if ( 300 300 ) 
+      { 
+      } 
+   else 
+      { 
+      } 
+   newline ; 
+end 

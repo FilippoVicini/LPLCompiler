@@ -1,0 +1,22 @@
+// Syntax error on or just before line 4
+begin 
+   int iewx ; 
+   int a_ ; 6 
+   { 
+      if ( USi5 / ljcl5Jm4Ijb ) 
+         printch 86496 == ( 
+            newline ; ) ; 
+      else 
+         println 4 ; 
+      while ( 6 ) 
+         _M = 88 ; 
+      newline ; 
+      println 5 ; 
+   } 
+   printch 41 + 72 ; 
+   print _1x ; 
+   { 
+      { 
+      } 
+   } 
+end 

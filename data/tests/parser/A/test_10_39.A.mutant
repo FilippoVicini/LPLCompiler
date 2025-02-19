@@ -1,0 +1,10 @@
+// Syntax error on or just before line 5
+begin 
+   { 
+   } 
+   if nst6STuO ) 
+      newline ; 
+   else 
+      { ( 
+      } 
+end 

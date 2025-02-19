@@ -1,0 +1,12 @@
+// test_50_24.A
+begin
+   int J5RX; 
+   print !_gz + !Ja; 
+   println (R) + _t; 
+   switch(_0Z){
+   default : 
+      newline; 
+   }
+   while (458)
+      newline; 
+end

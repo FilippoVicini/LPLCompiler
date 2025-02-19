@@ -1,0 +1,6 @@
+// test_10_29.A
+begin
+   {
+   }
+   println 909; 
+end

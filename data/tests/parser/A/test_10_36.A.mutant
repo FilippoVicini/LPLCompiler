@@ -1,0 +1,5 @@
+// Syntax error on or just before line 2
+begin begin 
+   int _J ; 
+   newline ; 
+end 

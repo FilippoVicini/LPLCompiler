@@ -1,0 +1,7 @@
+// test_10_14.A
+begin
+   if (_p)
+      newline; 
+   else 
+      newline; 
+end

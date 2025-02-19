@@ -1,0 +1,11 @@
+// test_50_21.A
+begin
+   int O; 
+   int _8; 
+   newline; 
+   _Z = !(_K5$Nn) * N; 
+   if (6)
+      print 342; 
+   else 
+      newline; 
+end

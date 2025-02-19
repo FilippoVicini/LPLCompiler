@@ -1,0 +1,15 @@
+// Syntax error on or just before line 10
+begin 
+   int _0HA3 ; 
+   int r5 ; 
+   int PM ; 
+   int _5Q ; 
+   int d ; 
+   if ( _EJFC ) 
+      
+         newline ; { 
+      } 
+   else 
+      println _rXq ; 
+   println 559977 ; 
+end 

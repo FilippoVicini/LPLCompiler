@@ -1,0 +1,26 @@
+// test_100_47.A
+begin
+   int pZ; 
+   int waw; 
+   int __MBv8g; 
+   int bCus5L$; 
+   int _wLSJ5; 
+   int _W6; 
+   int z; 
+   while (_Mu < zt)
+      switch(y && 7237){
+      case 989: 
+         {
+         }
+      case 8: 
+         {
+         }
+      case 017: 
+         {
+         }
+      default : 
+         print zE; 
+      }
+   println (413); 
+   println !e / 2; 
+end

@@ -1,0 +1,10 @@
+// Syntax error on or just before line 10
+begin 
+   int _884q ; 
+   int x ; 
+   int aC ; 
+   int BY$ ; 
+   newline ; 
+   newline ; 
+end 
+end 

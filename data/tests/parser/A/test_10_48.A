@@ -1,0 +1,8 @@
+// test_10_48.A
+begin
+   if (jD7)
+      newline; 
+   else 
+      {
+      }
+end

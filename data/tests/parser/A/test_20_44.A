@@ -1,0 +1,7 @@
+// test_20_44.A
+begin
+   int cs3; 
+   int Tu10HE; 
+   println _q; 
+   newline; 
+end

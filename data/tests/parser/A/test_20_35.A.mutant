@@ -1,0 +1,5 @@
+// Syntax error on or just before line 5
+begin 
+   int b ; 
+   println ( 477893739 ) == 1 ; 
+   newline ; 

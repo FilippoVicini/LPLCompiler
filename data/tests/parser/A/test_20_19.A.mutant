@@ -1,0 +1,10 @@
+// Syntax error on or just before line 4
+begin 
+   int _OO ; 
+   while while ( _8 ) 
+      { 
+      } 
+   newline ; 
+   { 
+   } 
+end 

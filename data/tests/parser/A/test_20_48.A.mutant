@@ -1,0 +1,7 @@
+// Syntax error on or just before line 2
+; 
+   int B3Rb ; 
+   int S begin 
+   { 
+   } 
+end 

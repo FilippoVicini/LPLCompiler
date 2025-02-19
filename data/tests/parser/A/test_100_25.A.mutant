@@ -1,0 +1,27 @@
+// Syntax error on or just before line 6
+begin 
+   int _EjN ; 
+   int _4D2 ; 
+   int _kS ; 
+   _Wakw8CE = 006 006 == ! 6 ; 
+   switch ( ( 0 ) / ! 242250 ) { 
+   case 2876 : 
+      { 
+      } 
+   case 9 : 
+      { 
+      } 
+   case 6 : 
+      newline ; 
+   case 60 : 
+      newline ; 
+   default : 
+      if ( ! _M ) 
+         while ( Tj1Xe9pzr ) 
+            newline ; 
+      else 
+         printch - 581247 ; 
+   } 
+   print 2089 ; 
+   newline ; 
+end 

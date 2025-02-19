@@ -1,0 +1,27 @@
+// Syntax error on or just before line 10
+begin 
+   newline ; 
+   { 
+      newline ; 
+      { 
+      } 
+   } 
+   if ( 09959 / 
+      int ON ; 
+      int _F ; 
+      int _bquUe ; 
+      int _h6B ; 
+      int _j ; 
+      int _Iw9XPM7sUR ; 
+      int _H ; 661578 ) 
+      newline ; 
+   else 
+      if ( 27 ) 
+         vI$ = 38 ; 
+      else 
+         print NYSM7RToF6UN8 ; 
+   { 
+   } 
+   newline ; 
+   print J6uNrnx ; 
+end 

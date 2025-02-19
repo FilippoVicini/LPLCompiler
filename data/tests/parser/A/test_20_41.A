@@ -1,0 +1,7 @@
+// test_20_41.A
+begin
+   int gjF; 
+   newline; 
+   newline; 
+   printch 95; 
+end

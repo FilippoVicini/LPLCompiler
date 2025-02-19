@@ -1,0 +1,7 @@
+// Syntax error on or just before line 5
+begin 
+   int y3$W ; 
+end 
+   { 
+   } 
+   int UM9x ; 

@@ -1,0 +1,5 @@
+// test_10_10.A
+begin
+   int j8m; 
+   println 7165; 
+end

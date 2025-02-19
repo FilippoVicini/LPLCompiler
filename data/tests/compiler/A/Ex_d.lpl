@@ -1,0 +1,20 @@
+//77
+//20
+//
+begin
+   int x;
+
+   x = 20;
+   if (x < 20)
+   {
+      x = x - 7;
+   }
+   else
+   {
+      if (x < 30)
+         println 77;
+      else
+         println 88;
+   }
+   println x;
+end

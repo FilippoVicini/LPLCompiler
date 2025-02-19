@@ -1,0 +1,12 @@
+// Syntax error on or just before line 6
+begin 
+   int _aTP ; 
+   int _J107wRH ; 
+   int OKh ; 
+   _Cru = ( ( J ) && 903 903 ) <= _O ; 
+   { 
+   } 
+   newline ; 
+   { 
+   } 
+end 

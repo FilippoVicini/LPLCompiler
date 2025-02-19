@@ -1,0 +1,14 @@
+// Syntax error on or just before line 3
+begin 
+   RPPPSW ; 
+   int _o ; 
+   int Z ; 
+   int DXmb ; 
+   int _B1kBNAm3ZUlixx ; 
+   print m ; 
+   printch _s ; 
+   if ( 33 ) 
+      print BVDkZT int ; 
+   else 
+      newline ; 
+end 

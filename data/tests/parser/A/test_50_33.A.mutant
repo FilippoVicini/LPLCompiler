@@ -1,0 +1,13 @@
+// Syntax error on or just before line 4
+begin 
+   int EiOwK5 ; 
+   int int t ; 
+   _J = 3 || _9BL ; 
+   _ZXDI = ! 10 ; 
+   if ( _z8 ) 
+      newline ; 
+   else 
+      { 
+      } 
+   print 1 ; 
+end 

@@ -1,0 +1,10 @@
+// test_20_22.A
+begin
+   int nC; 
+   switch(DVk){
+   default : 
+      {
+      }
+   }
+   newline; 
+end

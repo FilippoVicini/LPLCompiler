@@ -1,0 +1,9 @@
+// Syntax error on or just before line 5
+begin 
+   int _3 ; 
+   newline ; 
+   if ( Xgbv8 ) ) 
+      newline ; 
+   else 
+      printch Vum ; 
+end 

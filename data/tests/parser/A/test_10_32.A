@@ -1,0 +1,5 @@
+// test_10_32.A
+begin
+   while (_UUL)
+      newline; 
+end

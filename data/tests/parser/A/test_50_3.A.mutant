@@ -1,0 +1,19 @@
+// Syntax error on or just before line 4
+begin 
+   
+      int __I1sgh ; _UKf_ ; 
+   int _9e ; int 
+   int _5 ; 
+   println 2 ; 
+   newline ; 
+   if ( 8 ) 
+      newline ; 
+   else 
+      if ( 8276 ) 
+         newline ; 
+      else 
+         { 
+         } 
+   { 
+   } 
+end 

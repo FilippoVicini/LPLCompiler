@@ -1,0 +1,15 @@
+// test_50_45.A
+begin
+   int Tp; 
+   int y; 
+   int G0b; 
+   int _a; 
+   {
+      printch 10; 
+   }
+   {
+   }
+   print 82674; 
+   {
+   }
+end

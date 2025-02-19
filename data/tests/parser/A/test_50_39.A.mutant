@@ -1,0 +1,21 @@
+// Syntax error on or just before line 15
+begin 
+   int i4CP ; 
+   int EBf ; 
+   { 
+      { 
+      } 
+      { 
+      } 
+      newline ; 
+   } 
+   { 
+      newline ; 
+      { 
+         int g ; 
+      } 
+   } 
+   newline ; 
+   { 
+   } 
+end 

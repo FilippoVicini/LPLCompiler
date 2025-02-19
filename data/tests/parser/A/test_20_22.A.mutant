@@ -1,0 +1,10 @@
+// Syntax error on or just before line 9
+begin 
+   int nC ; 
+   switch ( DVk ) { 
+   default : 
+      { 
+      } 
+   } 
+   newline ; ; 
+end 

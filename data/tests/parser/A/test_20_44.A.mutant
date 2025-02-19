@@ -1,0 +1,7 @@
+// Syntax error on or just before line 7
+begin 
+   int cs3 ; 
+   int Tu10HE ; 
+   println _q ; 
+end 
+   newline ; 

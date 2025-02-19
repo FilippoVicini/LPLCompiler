@@ -1,0 +1,6 @@
+// test_20_35.A
+begin
+   int b; 
+   println (477893739) == 1; 
+   newline; 
+end

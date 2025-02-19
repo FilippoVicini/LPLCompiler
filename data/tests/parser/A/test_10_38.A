@@ -1,0 +1,7 @@
+// test_10_38.A
+begin
+   int LRfsmkb; 
+   {
+   }
+   newline; 
+end

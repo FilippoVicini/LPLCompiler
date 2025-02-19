@@ -1,0 +1,21 @@
+// test_50_39.A
+begin
+   int i4CP; 
+   int g; 
+   int EBf; 
+   {
+      {
+      }
+      {
+      }
+      newline; 
+   }
+   {
+      newline; 
+      {
+      }
+   }
+   newline; 
+   {
+   }
+end

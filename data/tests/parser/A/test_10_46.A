@@ -1,0 +1,9 @@
+// test_10_46.A
+begin
+   if (6834)
+      newline; 
+   else 
+      {
+      }
+   newline; 
+end

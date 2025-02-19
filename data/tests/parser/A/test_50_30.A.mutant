@@ -1,0 +1,10 @@
+// Syntax error on or just before line 9
+begin 
+   int _iV ; 
+   int _S ; 
+   int dL1 ; 
+   if ( - 9 || bp ) 
+      { 
+      } 
+      mQ = ( E9w9kW1 ) == D ; 
+end 

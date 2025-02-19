@@ -1,0 +1,11 @@
+// test_20_39.A
+begin
+   {
+      newline; 
+      while (I)
+         {
+         }
+   }
+   {
+   }
+end

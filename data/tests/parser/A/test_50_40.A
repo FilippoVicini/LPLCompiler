@@ -1,0 +1,17 @@
+// test_50_40.A
+begin
+   int _v; 
+   int _gklKp; 
+   int pv; 
+   println a; 
+   newline; 
+   println cMX; 
+   printch 43; 
+   while (31)
+      if (423)
+         {
+         }
+      else 
+         {
+         }
+end

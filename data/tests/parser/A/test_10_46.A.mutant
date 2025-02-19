@@ -1,0 +1,9 @@
+// Syntax error on or just before line 2
+begin begin 
+   if ( 6834 ) 
+      newline ; 
+   else 
+      { 
+      } 
+   newline ; 
+end 

@@ -1,0 +1,8 @@
+// test_20_37.A
+begin
+   print _emlrPWXAg; 
+   newline; 
+   print 81666225; 
+   {
+   }
+end

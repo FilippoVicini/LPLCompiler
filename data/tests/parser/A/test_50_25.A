@@ -1,0 +1,11 @@
+// test_50_25.A
+begin
+   int g7k; 
+   int J; 
+   printch -0 && -20; 
+   while (0)
+      newline; 
+   while (659)
+      newline; 
+   newline; 
+end

@@ -1,0 +1,6 @@
+// Syntax error on or just before line 5
+begin 
+   int s ; 
+   int x ; 
+   println ; 
+end 

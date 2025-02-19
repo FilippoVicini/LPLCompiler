@@ -1,0 +1,4 @@
+// test_10_35.A
+begin
+   _B = gR; 
+end

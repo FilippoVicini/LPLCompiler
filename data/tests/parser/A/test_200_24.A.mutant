@@ -1,0 +1,43 @@
+// Syntax error on or just before line 24
+begin 
+   int GLpXx ; 
+   int KJUhsl ; 
+   int qoFE ; 
+   int C ; 
+   int sEsS0J ; 
+   int t9dKis ; 
+   { 
+      { 
+         _MZ = _cACd$WN ; 
+         switch ( 5359 <= 9837 ) { 
+         case 170588 : 
+            { 
+               newline ; 
+            } 
+         case 11 : 
+            newline ; 
+         default : 
+            print _ru ; 
+         } 
+      } 
+      println - 1 + ( _oRd - _8Ko ) ; 
+      println ( _p _p ) / ! Ykw ; 
+      NBvx = Cm ; 
+      { 
+      } 
+      { 
+      } 
+      print 7 ; 
+      printch _z ; 
+      { 
+      } 
+   } 
+   newline ; 
+   { 
+      println 854 ; 
+      printch 43 ; 
+   } 
+   println _z ; 
+   print 7 <= ( ! ! ( _hGI ) ) ; 
+   newline ; 
+end 

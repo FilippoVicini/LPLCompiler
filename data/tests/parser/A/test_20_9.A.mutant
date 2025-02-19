@@ -1,0 +1,11 @@
+// Syntax error on or just before line 3
+begin 
+   VWJL ; 
+   int sv ; 
+   _51NcH2hyD = _u ; 
+   switch ( 67 ) { 
+   default : 
+      { 
+      } 
+   } 
+end 

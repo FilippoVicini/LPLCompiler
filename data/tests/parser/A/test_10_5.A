@@ -1,0 +1,5 @@
+// test_10_5.A
+begin
+   int r$c; 
+   int Tp; 
+end

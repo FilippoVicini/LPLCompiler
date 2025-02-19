@@ -1,0 +1,11 @@
+// test_20_14.A
+begin
+   int S; 
+   if (300)
+      {
+      }
+   else 
+      {
+      }
+   newline; 
+end

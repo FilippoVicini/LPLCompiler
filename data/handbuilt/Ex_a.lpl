@@ -1,0 +1,7 @@
+//27
+begin
+   int x; // a comment
+
+   x = 3;
+   print x * 9;
+end

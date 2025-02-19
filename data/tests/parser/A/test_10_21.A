@@ -1,0 +1,5 @@
+// test_10_21.A
+begin
+   int c; 
+   newline; 
+end

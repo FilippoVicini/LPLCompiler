@@ -1,0 +1,9 @@
+// test_20_4.A
+begin
+   int esA; 
+   int _0M5; 
+   int x; 
+   newline; 
+   {
+   }
+end

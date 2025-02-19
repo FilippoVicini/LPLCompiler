@@ -1,0 +1,17 @@
+//54
+//
+begin
+   int x;
+   int zz;
+
+   x = x - 1;
+   zz = 55;
+   switch (x) {
+      case 7:
+         println 99;
+      case -1:
+         println x + zz;
+      default:
+         println x;
+   }
+end

@@ -1,0 +1,14 @@
+// test_50_18.A
+begin
+   int RPPPSW; 
+   int _o; 
+   int Z; 
+   int DXmb; 
+   int _B1kBNAm3ZUlixx; 
+   print m; 
+   printch _s; 
+   if (33)
+      print BVDkZT; 
+   else 
+      newline; 
+end

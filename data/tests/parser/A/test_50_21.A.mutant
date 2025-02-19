@@ -1,0 +1,11 @@
+// Syntax error on or just before line 6
+begin 
+   int O ; 
+   int _8 ; 
+   newline ; 
+   _Z = ! ( if ) * N ; 
+   _K5$Nn ( 6 ) 
+      print 342 ; 
+   else 
+      newline ; 
+end 
