@@ -13,7 +13,7 @@ public class Ex_c {
         // define "part" and "y" variables
         decls.add(new VarDecl(new TypeInt(), "count"));
 
-        Exp d = new ExpMinus(new ExpVar("count"), new ExpInt(1));
+
         List<Stm> blockStms = new ArrayList<>();
         blockStms.add(new StmPrintChar(new ExpInt(32)));
         blockStms.add(new StmPrint(new ExpVar("count")));
