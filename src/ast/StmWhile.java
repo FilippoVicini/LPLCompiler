@@ -16,7 +16,7 @@ public class StmWhile extends Stm {
 
     @Override
     public void compile(SymbolTable st) {
-        // To Be Completed
+
     }
 
     @Override

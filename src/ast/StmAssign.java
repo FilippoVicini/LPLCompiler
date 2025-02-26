@@ -14,7 +14,8 @@ public class StmAssign extends Stm {
 
     @Override
     public void compile(SymbolTable st) {
-        // To Be Completed
+        exp.compile(st);
+        emit("storei " + st.makeVarLabel(varName));
     }
 
     @Override

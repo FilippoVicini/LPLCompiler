@@ -1,0 +1,18 @@
+	push 6
+	loadi $_y
+	add
+	storei $_part
+	loadi $_part
+	push 3
+	sub
+	storei $_y
+	loadi $_part
+	loadi $_y
+	add
+	push 10
+	mul
+	sysc OUT_STR
+	halt
+.data
+$_part: 0
+$_y: 0

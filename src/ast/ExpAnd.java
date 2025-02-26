@@ -13,7 +13,11 @@ public class ExpAnd extends Exp {
 
     @Override
     public void compile(SymbolTable st) {
-        // To Be Completed
+        left.compile(st);
+        right.compile(st);
+        emit("mul");
+        emit("test_n");
+        emit("test_n");
     }
 
     @Override

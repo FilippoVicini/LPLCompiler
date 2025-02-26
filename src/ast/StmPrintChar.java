@@ -12,7 +12,8 @@ public class StmPrintChar extends Stm {
 
     @Override
     public void compile(SymbolTable st) {
-        // To Be Completed
+        exp.compile(st);
+        emit("sysc OUT_STR");
     }
 
     @Override

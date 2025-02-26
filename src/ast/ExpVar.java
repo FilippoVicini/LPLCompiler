@@ -15,7 +15,7 @@ public class ExpVar extends Exp {
         // force an exception if varName has no declaration
         st.getVarType(varName);
         // global variable, statically allocated
-        emit("push " + st.makeVarLabel(varName));
+        emit("loadi " + st.makeVarLabel(varName));
     }
 
     @Override

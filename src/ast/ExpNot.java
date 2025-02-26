@@ -12,7 +12,8 @@ public class ExpNot extends Exp {
 
     @Override
     public void compile(SymbolTable st) {
-        // To Be Completed
+        e.compile(st);
+        emit("test_z");
     }
 
     @Override

@@ -13,7 +13,9 @@ public class ExpPlus extends Exp {
 
     @Override
     public void compile(SymbolTable st) {
-        // To Be Completed
+        left.compile(st);
+        right.compile(st);
+        emit("add");
     }
 
     @Override
