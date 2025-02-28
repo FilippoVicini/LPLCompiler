@@ -8,7 +8,7 @@ public class StmNewline extends Stm {
 
     @Override
     public void compile(SymbolTable st) {
-        // To Be Completed
+        emit("sysc OUT_LN");
     }
 
     @Override

@@ -37,12 +37,9 @@ public class Ex_b {
 
     }
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args)  {
 
         System.out.println(buildAST());
-        Program p = buildAST();
-        p.compile();
 
-        AST.write(Paths.get("temp.ssma"));
     }
 }

@@ -19,7 +19,7 @@ public class StmSwitch extends Stm {
 
     @Override
     public void compile(SymbolTable st) {
-        // To Be Completed
+        emit("jumpi " testLabel);
     }
 
     public static class Case {

@@ -51,13 +51,57 @@ public class LPLParser {
         List<Stm> body = new LinkedList<>();
         lex.eat("BEGIN");
 
-        // To do: parse the global-variable declarations and add them to globals
+        // Parse the global-variable declarations and add them to globals
+        globals = GlobalVarDeclKleene();
 
-        // To do: parse the program body statements and add them to body
+        // Parse the program body statements and add them to body
+        while (!lex.tok().isType("END")) {
+            body.add(Stm());
+        }
 
         lex.eat("END");
         return new Program(globals, body);
     }
+
+    private List<VarDecl> GlobalVarDeclKleene() {
+        switch (lex.tok().type) {
+            case "INT_TYPE": {
+                VarDecl e = VarDecl();
+                List<VarDecl> varDecls = GlobalVarDeclKleene();
+                varDecls.add(0,e);
+                return varDecls;
+            }
+            default:
+                return new ArrayList<>();
+        }
+    }
+    private VarDecl VarDecl() {
+        TypeInt v1 = Type();
+        String name = "";
+        switch (lex.tok().type) {
+            case "ID": {
+                String intLit = lex.tok().image;
+                lex.next();
+                name= intLit;
+            }
+
+        }
+        return new VarDecl(v1, name);
+    }
+
+    private TypeInt Type(){
+        switch (lex.tok().type) {
+            case "INT_TYPE": {
+                String intLit = lex.tok().image;
+                lex.next();
+                return new TypeInt();
+            }
+
+            default:
+                throw new ParseException(lex.tok(), "INT", "LBR");
+        }
+    }
+
 
     private Stm Stm() {
         switch (lex.tok().type) {
@@ -70,9 +114,73 @@ public class LPLParser {
                 lex.eat("RCBR");
                 return new StmBlock(blockBody);
             }
-            // To do: add the missing cases
+            case "ID": {
+                String id = lex.tok().image;
+                lex.next();
+                lex.eat("ASSIGN");
+                Exp exp = Exp();
+                lex.eat("SEMIC");
+                return new StmAssign(id, exp);
+            }
+            case "IF": {
+                lex.next();
+                lex.eat("LBR");
+                Exp condition = Exp();
+                lex.eat("RBR");
+                Stm thenStm = Stm();
+                lex.eat("ELSE");
+                Stm elseStm = Stm();
+                return new StmIf(condition, thenStm, elseStm);
+            }
+            case "WHILE": {
+                lex.next();
+                lex.eat("LBR");
+                Exp condition = Exp();
+                lex.eat("RBR");
+                Stm body = Stm();
+                return new StmWhile(condition, body);
+            }
+            case "PRINT": {
+                lex.next();
+                Exp exp = Exp();
+                lex.eat("SEMIC");
+                return new StmPrint(exp);
+            }
+            case "PRINTLN": {
+                lex.next();
+                Exp exp = Exp();
+                lex.eat("SEMIC");
+                return new StmPrintln(exp);
+            }
+            case "PRINTCH": {
+                lex.next();
+                Exp exp = Exp();
+                lex.eat("SEMIC");
+                return new StmPrintch(exp);
+            }
+            case "NEWLINE": {
+                lex.next();
+                lex.eat("SEMIC");
+                return new StmNewline();
+            }
+            case "SWITCH": {
+                lex.next();
+                lex.eat("LBR");
+                Exp exp = Exp();
+                lex.eat("RBR");
+                lex.eat("LCBR");
+                List<Case> cases = new ArrayList<>();
+                while (lex.tok().isType("CASE")) {
+                    cases.add(Case());
+                }
+                lex.eat("DEFAULT");
+                lex.eat("COLON");
+                Stm defaultStm = Stm();
+                lex.eat("RCBR");
+                return new StmSwitch(exp, cases, defaultStm);
+            }
             default:
-                throw new ParseException(lex.tok(), "LCBR");
+                throw new ParseException(lex.tok(), "LCBR", "ID", "IF", "WHILE", "PRINT", "PRINTLN", "PRINTCH", "NEWLINE", "SWITCH");
         }
     }
 

@@ -26,12 +26,9 @@ public class Ex_a {
         return new Program(decls, stms);
     }
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args)  {
         System.out.println(buildAST());
-        Program p = buildAST();
-        p.compile();
 
-        AST.write(Paths.get("temp2.ssma"));
 
     }
 }

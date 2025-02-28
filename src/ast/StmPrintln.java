@@ -13,6 +13,7 @@ public class StmPrintln extends Stm {
     @Override
     public void compile(SymbolTable st) {
         exp.compile(st);
+        emit("sysc OUT_DEC");
         emit("sysc OUT_LN");
     }
 

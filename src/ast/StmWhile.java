@@ -3,6 +3,8 @@ package ast;
 import compile.StaticAnalysisException;
 import compile.SymbolTable;
 
+
+
 public class StmWhile extends Stm {
 
     public final Exp exp;
@@ -16,8 +18,17 @@ public class StmWhile extends Stm {
 
     @Override
     public void compile(SymbolTable st) {
+        emit("$_loop_s:");
 
+        exp.compile(st);
+        emit("jumpi_z $_loop_e");
+
+        body.compile(st);
+        emit("jumpi $_loop_s");
+
+        emit("$_loop_e:");
     }
+
 
     @Override
     public <T> T accept(ast.util.Visitor<T> visitor) { return visitor.visit(this); }

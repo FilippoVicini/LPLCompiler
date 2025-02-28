@@ -1,7 +1,10 @@
 package handbuilt;
 
 import ast.*;
+import test.Utils;
 
+import java.io.IOException;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,6 +21,7 @@ public class Ex_d {
 
         blockStms.add(
                         new StmAssign("x", new ExpMinus(new ExpVar("x"), new ExpInt(7)))
+
                 );
         List<Stm> blockStms2 = new ArrayList<>();
         blockStms2.add(
@@ -32,6 +36,7 @@ public class Ex_d {
 
         List<Stm> stms = new ArrayList<>();
         stms.add(new StmAssign("x", new ExpInt(20)));
+
         stms.add(new StmIf(
                 new ExpLessThan(new ExpVar("x"), new ExpInt(20)),
                 new StmBlock(blockStms),
@@ -39,14 +44,20 @@ public class Ex_d {
 
         ));
 
-        stms.add(     new StmPrintln(new ExpVar("x")));
-
+        stms.add(new StmPrintln(new ExpVar("x")));
 
         Program program = new Program(decls, stms);
         return program;
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         System.out.println(buildAST());
+        Program p = buildAST();
+        p.compile();
+        AST.write(Paths.get("temp3.ssma"));
+        
+        // Add this to execute and see output
+        String output = Utils.exec(p);
+        System.out.println(output);
     }
 }
