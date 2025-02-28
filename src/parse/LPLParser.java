@@ -51,13 +51,9 @@ public class LPLParser {
         List<Stm> body = new LinkedList<>();
         lex.eat("BEGIN");
 
-        // Parse the global-variable declarations and add them to globals
+        // To do: parse the global-variable declarations and add them to globals
         globals = GlobalVarDeclKleene();
-
-        // Parse the program body statements and add them to body
-        while (!lex.tok().isType("END")) {
-            body.add(Stm());
-        }
+        // To do: parse the program body statements and add them to body
 
         lex.eat("END");
         return new Program(globals, body);
@@ -114,73 +110,9 @@ public class LPLParser {
                 lex.eat("RCBR");
                 return new StmBlock(blockBody);
             }
-            case "ID": {
-                String id = lex.tok().image;
-                lex.next();
-                lex.eat("ASSIGN");
-                Exp exp = Exp();
-                lex.eat("SEMIC");
-                return new StmAssign(id, exp);
-            }
-            case "IF": {
-                lex.next();
-                lex.eat("LBR");
-                Exp condition = Exp();
-                lex.eat("RBR");
-                Stm thenStm = Stm();
-                lex.eat("ELSE");
-                Stm elseStm = Stm();
-                return new StmIf(condition, thenStm, elseStm);
-            }
-            case "WHILE": {
-                lex.next();
-                lex.eat("LBR");
-                Exp condition = Exp();
-                lex.eat("RBR");
-                Stm body = Stm();
-                return new StmWhile(condition, body);
-            }
-            case "PRINT": {
-                lex.next();
-                Exp exp = Exp();
-                lex.eat("SEMIC");
-                return new StmPrint(exp);
-            }
-            case "PRINTLN": {
-                lex.next();
-                Exp exp = Exp();
-                lex.eat("SEMIC");
-                return new StmPrintln(exp);
-            }
-            case "PRINTCH": {
-                lex.next();
-                Exp exp = Exp();
-                lex.eat("SEMIC");
-                return new StmPrintch(exp);
-            }
-            case "NEWLINE": {
-                lex.next();
-                lex.eat("SEMIC");
-                return new StmNewline();
-            }
-            case "SWITCH": {
-                lex.next();
-                lex.eat("LBR");
-                Exp exp = Exp();
-                lex.eat("RBR");
-                lex.eat("LCBR");
-                List<Case> cases = new ArrayList<>();
-                while (lex.tok().isType("CASE")) {
-                    cases.add(Case());
-                }
-                lex.eat("DEFAULT");
-                lex.eat("COLON");
-                Stm defaultStm = Stm();
-                lex.eat("RCBR");
-                return new StmSwitch(exp, cases, defaultStm);
-            }
+            // To do: add the missing cases
             default:
-                throw new ParseException(lex.tok(), "LCBR", "ID", "IF", "WHILE", "PRINT", "PRINTLN", "PRINTCH", "NEWLINE", "SWITCH");
+                throw new ParseException(lex.tok(), "LCBR");
         }
     }
 
