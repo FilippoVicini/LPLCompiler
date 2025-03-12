@@ -12,18 +12,22 @@ public class Ex_d {
 
     public static Program buildAST() {
 
+
         TypeInt intType = new TypeInt();
 
         List<VarDecl> decls = new ArrayList<>();
+        // declare x
         decls.add(new VarDecl(intType, "x"));
 
         List<Stm> blockStms = new ArrayList<>();
-
+        // first if statement block
         blockStms.add(
                         new StmAssign("x", new ExpMinus(new ExpVar("x"), new ExpInt(7)))
 
                 );
+
         List<Stm> blockStms2 = new ArrayList<>();
+        // else statement with inner if statement block
         blockStms2.add(
                 new StmIf(
                         new ExpLessThan(new ExpVar("x"), new ExpInt(30)),
@@ -32,11 +36,9 @@ public class Ex_d {
                 )
         );
 
-
-
         List<Stm> stms = new ArrayList<>();
         stms.add(new StmAssign("x", new ExpInt(20)));
-
+        // if statement block
         stms.add(new StmIf(
                 new ExpLessThan(new ExpVar("x"), new ExpInt(20)),
                 new StmBlock(blockStms),
@@ -44,6 +46,7 @@ public class Ex_d {
 
         ));
 
+        // print x
         stms.add(new StmPrintln(new ExpVar("x")));
 
         Program program = new Program(decls, stms);
@@ -52,12 +55,6 @@ public class Ex_d {
 
     public static void main(String[] args) throws IOException {
         System.out.println(buildAST());
-        Program p = buildAST();
-        p.compile();
-        AST.write(Paths.get("temp3.ssma"));
-        
-        // Add this to execute and see output
-        String output = Utils.exec(p);
-        System.out.println(output);
+
     }
 }

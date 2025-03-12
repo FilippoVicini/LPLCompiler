@@ -11,20 +11,20 @@ public class Ex_b {
 
     public static Program buildAST() {
         List<VarDecl> decls = new ArrayList<>();
-        // define "part" and "y" variables
+        // define part and y vars
         decls.add(new VarDecl(new TypeInt(), "part"));
         decls.add(new VarDecl(new TypeInt(), "y"));
 
         List<Stm> stms = new ArrayList<>();
 
-        // first statement to add 6 and y
+        // add y and 6
         Exp a = new ExpPlus(new ExpInt(6), new ExpVar("y"));
-        // assign statment to variable part
 
+        // assign the operation to part
         stms.add(new StmAssign("part", a));
-        // subtract varibale previously defined and 3
+        // subtract part and 3
         Exp e = new ExpMinus( new ExpVar("part"), new ExpInt(3));
-        // assign it to variable y
+        // assign the subtract operation to y
         stms.add(new StmAssign("y", e));
         // first part of the print statement
         Exp c = new ExpPlus(new ExpVar("part"),new ExpVar("y"));

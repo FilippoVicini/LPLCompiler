@@ -20,6 +20,50 @@ public class StmSwitch extends Stm {
     @Override
     public void compile(SymbolTable st) {
 
+        String caseLabel = "$_case_";
+        String testLabel = "$_test_e_";
+        String endLabel = "$_e_";
+        String defaultLabel = "$_deg_";
+
+
+        emit("jumpi " + testLabel);
+
+        for (Case a : cases) {
+
+            if (a.caseNumber < 0) {
+              emit(caseLabel + "_" + Math.abs(a.caseNumber) + ":");
+            } else {
+                emit(caseLabel + a.caseNumber + ":");
+            }
+            a.stm.compile(st);
+            emit("jumpi " + endLabel);
+        }
+
+        emit(testLabel + ":");
+        caseExp.compile(st);
+        for (Case a : cases) {
+            emit("push " + a.caseNumber);
+            emit("sub");
+            emit("dup");
+
+            if (a.caseNumber < 0) {
+                emit("jumpi_z"+caseLabel+"_"+Math.abs(a.caseNumber));
+            } else {
+                emit("jumpi_z"+caseLabel + a.caseNumber);
+            }
+
+            emit("push " + a.caseNumber);
+            emit("add");
+        }
+
+
+        emit("jumpi " + defaultLabel);
+
+
+        emit(defaultLabel + ":");
+            defaultCase.compile(st);
+
+        emit(endLabel + ":");
     }
 
     public static class Case {
