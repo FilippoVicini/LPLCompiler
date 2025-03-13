@@ -1,9 +1,0 @@
-	push 3
-	storei $_x
-	loadi $_x
-	push 9
-	mul
-	sysc OUT_DEC
-	halt
-.data
-$_x: 0

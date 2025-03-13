@@ -12,16 +12,16 @@ public class Ex_c {
     public static Program buildAST() {
 
         List<VarDecl> decls = new ArrayList<>();
-        // define count variable
+        // define a new variable named "count" of type int
         decls.add(new VarDecl(new TypeInt(), "count"));
 
-        // blockStms for while loop
+        // create a list of blockStms for the while loop
         List<Stm> blockStms = new ArrayList<>();
-        // print 32
+        // first line in while loop: print 32
         blockStms.add(new StmPrintChar(new ExpInt(32)));
-        // print count
+        // second line inside while loop: print a newly defined variable named "count"
         blockStms.add(new StmPrint(new ExpVar("count")));
-        // reduce count by 1
+        // third line inside while loop: decrease count by 1
         blockStms.add(new StmAssign(
                         "count",
                         new ExpMinus(new ExpVar("count"), new ExpInt(1))
@@ -29,30 +29,28 @@ public class Ex_c {
         );
 
         List<Stm> stms = new ArrayList<>();
-        // create variable 3
+        // create new int var of value "3"
         Exp a =new ExpInt(3);
-        // assign 3 to count
+        // assign the value of 3 to the variable named "count"
         stms.add(new StmAssign("count", a));
 
-        // inner while loop statement
+        // define while loop condition
         Exp c = new ExpPlus(new ExpVar("count"), new ExpInt(1));
 
-        // while loop
+        // while loop block
         stms.add(new StmWhile(
-                        // 0 < c
+                        // while loop condition comparing 0 to previously defined operation named "c"
                         new ExpLessThan(new ExpInt(0), c),
+                        // block of statements inside while loop
                         new StmBlock(blockStms)
                 )
         );
-
 
         Program program = new Program(decls, stms);
         return program;
     }
 
     public static void main(String[] args)  {
-
         System.out.println(buildAST());
-
     }
 }

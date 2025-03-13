@@ -3,7 +3,7 @@ package handbuilt;
 import ast.*;
 
 import java.io.IOException;
-import java.nio.file.Paths;
+
 import java.util.List;
 import java.util.ArrayList;
 
@@ -15,11 +15,11 @@ public class Ex_a {
         decls.add(new VarDecl(new TypeInt(), "x"));
 
         List<Stm> stms = new ArrayList<>();
-        // create int to assign to x
+        // create new int var of value "3"
         Exp a = new ExpInt(3);
-        // assign 3 to x
+        // assign the int value of 3 to x
         stms.add(new StmAssign("x", a));
-        // multiply x * 9
+        // multiply x by a new int of value 9
         Exp e = new ExpTimes( new ExpVar("x"),new ExpInt(9));
         // print the last statement
         stms.add(new StmPrint(e));
@@ -27,13 +27,6 @@ public class Ex_a {
     }
 
     public static void main(String[] args) throws IOException {
-
         System.out.println(buildAST());
-        Program p = buildAST();
-        p.compile();
-        AST.write(Paths.get("tst.ssma"));
-        System.out.println(buildAST());
-
-
     }
 }

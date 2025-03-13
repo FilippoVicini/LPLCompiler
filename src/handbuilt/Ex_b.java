@@ -11,35 +11,32 @@ public class Ex_b {
 
     public static Program buildAST() {
         List<VarDecl> decls = new ArrayList<>();
-        // define part and y vars
+        // define 2 new variables with names "part" and "y" of type int
         decls.add(new VarDecl(new TypeInt(), "part"));
         decls.add(new VarDecl(new TypeInt(), "y"));
 
         List<Stm> stms = new ArrayList<>();
 
-        // add y and 6
+        // using plus add y to 6
         Exp a = new ExpPlus(new ExpInt(6), new ExpVar("y"));
 
-        // assign the operation to part
+        // assign the "a" operation to the previously defined variable "part"
         stms.add(new StmAssign("part", a));
-        // subtract part and 3
+        //subtract the value 3 from "part"
         Exp e = new ExpMinus( new ExpVar("part"), new ExpInt(3));
-        // assign the subtract operation to y
+        // assign the "e" operation of subtraction to the variable "y"
         stms.add(new StmAssign("y", e));
-        // first part of the print statement
+        // first part to compose print statement
         Exp c = new ExpPlus(new ExpVar("part"),new ExpVar("y"));
-        // compose print statement
+        // compose the complete print statement multiplying "c" and a new int of value 10
         Exp d = new ExpTimes(c,new ExpInt(10));
-        // print
+        // print the complete print statement
         stms.add(new StmPrintChar(d));
 
         return new Program(decls, stms);
-
     }
 
     public static void main(String[] args)  {
-
         System.out.println(buildAST());
-
     }
 }

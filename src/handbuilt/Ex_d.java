@@ -12,26 +12,28 @@ public class Ex_d {
 
     public static Program buildAST() {
 
-
         TypeInt intType = new TypeInt();
 
         List<VarDecl> decls = new ArrayList<>();
-        // declare x
+        // define a new variable of type int with name "x"
         decls.add(new VarDecl(intType, "x"));
 
-        List<Stm> blockStms = new ArrayList<>();
         // first if statement block
+        List<Stm> blockStms = new ArrayList<>();
         blockStms.add(
-                        new StmAssign("x", new ExpMinus(new ExpVar("x"), new ExpInt(7)))
-
+                // operation of subtracting 7 from current value of x
+                new StmAssign("x", new ExpMinus(new ExpVar("x"), new ExpInt(7)))
                 );
-
-        List<Stm> blockStms2 = new ArrayList<>();
         // else statement with inner if statement block
+        List<Stm> blockStms2 = new ArrayList<>();
         blockStms2.add(
+                // nested if statement inside else statement
                 new StmIf(
+                        // if block condition x < 30
                         new ExpLessThan(new ExpVar("x"), new ExpInt(30)),
+                        // if condition is met print 77
                         new StmPrintln(new ExpInt(77)),
+                        // if condition is not met (else) print 88
                         new StmPrintln(new ExpInt(88))
                 )
         );
@@ -40,13 +42,15 @@ public class Ex_d {
         stms.add(new StmAssign("x", new ExpInt(20)));
         // if statement block
         stms.add(new StmIf(
+                // if block condition x < 20
                 new ExpLessThan(new ExpVar("x"), new ExpInt(20)),
+                // block statements if condition is met
                 new StmBlock(blockStms),
+                // block statements if condition is not met (else)
                 new StmBlock(blockStms2)
-
         ));
 
-        // print x
+        // finish the code printing a new variable x
         stms.add(new StmPrintln(new ExpVar("x")));
 
         Program program = new Program(decls, stms);
@@ -55,6 +59,5 @@ public class Ex_d {
 
     public static void main(String[] args) throws IOException {
         System.out.println(buildAST());
-
     }
 }
