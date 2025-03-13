@@ -165,15 +165,25 @@ public class LPLParser {
 
     private StmSwitch.Case Case() {
         lex.eat("CASE");
+
         int sign = 1;
         if (lex.tok().isType("MINUS")) {
             sign = -1;
             lex.eat("MINUS");
         }
+
+        // Parse the integer literal for the case value
+        if (!lex.tok().isType("INTLIT")) {
+            throw new ParseException(lex.tok(), "integer literal");
+        }
         int value = Integer.parseInt(lex.tok().image) * sign;
         lex.eat("INTLIT");
+
+
         lex.eat("COLON");
+        
         Stm stm = Stm();
+
         return new StmSwitch.Case(value, stm);
     }
 
@@ -226,9 +236,15 @@ public class LPLParser {
                 lex.eat("INTLIT");
                 return new ExpInt(value);
             case "MINUS":
+
                 lex.eat("MINUS");
-                Exp negExpr = SimpleExp();
-                return new ExpNot(negExpr);
+                if (lex.tok().isType("INTLIT")) {
+                    int val = -Integer.parseInt(lex.tok().image);
+                    lex.eat("INTLIT");
+                    return new ExpInt(val);
+                } else {
+                    throw new ParseException(lex.tok(), "INTLIT");
+                }
             case "NOT":
                 lex.eat("NOT");
                 Exp notExpr = SimpleExp();
