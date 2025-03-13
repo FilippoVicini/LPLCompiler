@@ -16,8 +16,8 @@ public class ExpAnd extends Exp {
         left.compile(st);
         right.compile(st);
         emit("mul");
-        emit("test_n");
-
+        emit("test_z");
+        emit("test_z");
     }
 
     @Override
