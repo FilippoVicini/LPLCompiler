@@ -1,6 +1,5 @@
 package ast;
 
-import compile.StaticAnalysisException;
 import compile.SymbolTable;
 
 

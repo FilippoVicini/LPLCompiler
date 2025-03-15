@@ -28,6 +28,7 @@ public class LPLParser {
         return prog;
     }
 
+    // Start method for the rules
     private Program Program() {
         // checks that head is "BEGIN"
         lex.eat("BEGIN");
