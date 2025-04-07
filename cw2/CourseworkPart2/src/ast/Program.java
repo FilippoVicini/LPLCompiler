@@ -33,7 +33,7 @@ public class Program extends AST {
 
         emit(".data");
         for (String varName: st.globalNames()) {
-            emit(st.makeVarLabel(varName) + ": 0");
+            emit(SymbolTable.makeVarLabel(varName) + ": 0");
         }
     }
 

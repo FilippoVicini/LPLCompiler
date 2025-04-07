@@ -4,8 +4,8 @@ import compile.SymbolTable;
 
 public class StmIf extends Stm {
 
-    private static int labelCounter = 0;
     public final Exp exp;
+
     public final Stm trueBranch, falseBranch;
 
     public StmIf(Exp exp, Stm trueBranch, Stm falseBranch) {
@@ -16,22 +16,18 @@ public class StmIf extends Stm {
 
     @Override
     public void compile(SymbolTable st) {
-        int currentLabel = labelCounter++;
-        String elseLabel = "$_if_e_" + currentLabel;
-        String endLabel = "$_if_end_" + currentLabel;
-
+        String ifFalseLabel = st.freshLabel("if_false");
+        String ifEndLabel = st.freshLabel("if_end");
+        emit("// if-condition");
         exp.compile(st);
-        emit("jumpi_z " + elseLabel);
-
+        emit("jumpi_z " + ifFalseLabel);
+        emit("// true-branch");
         trueBranch.compile(st);
-        if (falseBranch != null) {
-            emit("jumpi " + endLabel);
-            emit(elseLabel + ":");
-            falseBranch.compile(st);
-            emit(endLabel + ":");
-        } else {
-            emit(elseLabel + ":");
-        }
+        emit("jumpi " + ifEndLabel);
+        emit(ifFalseLabel + ":");
+        emit("// false-branch");
+        falseBranch.compile(st);
+        emit(ifEndLabel + ":");
     }
 
     @Override

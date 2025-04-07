@@ -15,15 +15,8 @@ public class ExpLessThanEqual extends Exp {
     public void compile(SymbolTable st) {
         left.compile(st);
         right.compile(st);
-        emit("sub");
-
-        emit("dup");
-        emit("test_n");
-
-        emit("swap");
-        emit("test_z");
-
-        emit("add");
+        emit("push 1", "add");
+        emit("sub", "test_n");
     }
 
     @Override

@@ -1,8 +1,9 @@
 package ast;
 
+import compile.StaticAnalysisException;
 import compile.SymbolTable;
 
-import java.util.List;
+import java.util.*;
 
 public class StmSwitch extends Stm {
 
@@ -18,50 +19,28 @@ public class StmSwitch extends Stm {
 
     @Override
     public void compile(SymbolTable st) {
-
-        String caseLabel = "$_case_";
-        String testLabel = "$_test_e_";
-        String endLabel = "$_e_";
-        String defaultLabel = "$_deg_";
-
-
-        emit("jumpi " + testLabel);
-
-        for (Case a : cases) {
-
-            if (a.caseNumber < 0) {
-              emit(caseLabel + "_" + Math.abs(a.caseNumber) + ":");
-            } else {
-                emit(caseLabel + a.caseNumber + ":");
-            }
-            a.stm.compile(st);
+        int caseCount = cases.size();
+        String[] caseLabels = new String[caseCount + 1];
+        for (int i = 0; i < caseCount; ++i) {
+            caseLabels[i] = st.freshLabel("case_number_" + i);
+        }
+        caseLabels[caseCount] = st.freshLabel("default");
+        String endLabel = st.freshLabel("switch_end");
+        caseExp.compile(st);
+        for (int i = 0; i < caseCount; ++i) {
+            Case thisCase = cases.get(i);
+            emit(caseLabels[i] + ":");
+            emit("dup"); // duplicate the switch-value in case this case does NOT match
+            emit("push " + thisCase.caseNumber);
+            emit("sub", "test_z");
+            emit("jumpi_z " + caseLabels[i+1]);
+            emit("pop"); // this case matched; the switch-value is not needed any more
+            thisCase.stm.compile(st);
             emit("jumpi " + endLabel);
         }
-
-        emit(testLabel + ":");
-        caseExp.compile(st);
-        for (Case a : cases) {
-            emit("push " + a.caseNumber);
-            emit("sub");
-            emit("dup");
-
-            if (a.caseNumber < 0) {
-                emit("jumpi_z"+caseLabel+"_"+Math.abs(a.caseNumber));
-            } else {
-                emit("jumpi_z"+caseLabel + a.caseNumber);
-            }
-
-            emit("push " + a.caseNumber);
-            emit("add");
-        }
-
-
-        emit("jumpi " + defaultLabel);
-
-
-        emit(defaultLabel + ":");
-            defaultCase.compile(st);
-
+        emit(caseLabels[caseCount] + ":");
+        emit("pop"); // the default case has been reached; the switch-value is not needed any more
+        defaultCase.compile(st);
         emit(endLabel + ":");
     }
 

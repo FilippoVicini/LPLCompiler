@@ -1,8 +1,7 @@
 package ast;
 
+import compile.StaticAnalysisException;
 import compile.SymbolTable;
-
-
 
 public class StmWhile extends Stm {
 
@@ -17,17 +16,17 @@ public class StmWhile extends Stm {
 
     @Override
     public void compile(SymbolTable st) {
-        emit("$_loop_s:");
-
+        String loopStartLabel = st.freshLabel("while_start");
+        String loopEndLabel = st.freshLabel("while_end");
+        emit(loopStartLabel + ":");
+        emit("// while-condition");
         exp.compile(st);
-        emit("jumpi_z $_loop_e");
-
+        emit("jumpi_z " + loopEndLabel);
+        emit("// while-body");
         body.compile(st);
-        emit("jumpi $_loop_s");
-
-        emit("$_loop_e:");
+        emit("jumpi " + loopStartLabel);
+        emit(loopEndLabel + ":");
     }
-
 
     @Override
     public <T> T accept(ast.util.Visitor<T> visitor) { return visitor.visit(this); }

@@ -9,15 +9,26 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
+/** Parse an LPL program and build its AST.  */
 public class LPLParser {
 
     public static final String LPL_SBNF_FILE = "data/LPL.sbnf";
     private Lexer lex;
 
+    /**
+     * Initialise a new LPL parser.
+     */
     public LPLParser() {
         lex = new Lexer(LPL_SBNF_FILE);
     }
 
+    /** Parse an LPL source file and return its AST.
+     *
+     * @param sourcePath a path to an LPL source file
+     * @return the Program AST for the parsed LPL program
+     * @throws ParseException if the source file contains syntax errors
+     * @throws IOException
+     */
     public Program parse(String sourcePath) throws IOException {
         lex.readFile(sourcePath);
         lex.next();
@@ -28,238 +39,227 @@ public class LPLParser {
         return prog;
     }
 
-    // Start method for the rules
     private Program Program() {
-        // checks that head is "BEGIN"
+        List<VarDecl> globals = new LinkedList<>();
+        List<Stm> body = new LinkedList<>();
         lex.eat("BEGIN");
-        // Program is a composition of GlobalVarDecl* and Stm*
-        List<VarDecl> globals = GlobalVarDeclKleene();
-        List<Stm> body = StmKleene();
-        // checks that head is "END" and finishes the program
+        while (lex.tok().isType("INT_TYPE")) {
+            globals.add(GlobalVarDecl());
+        }
+        while (!lex.tok().isType("END")) {
+            body.add(Stm());
+        }
         lex.eat("END");
         return new Program(globals, body);
     }
 
-    // Klenee method for the GlobalVarDecl
     private List<VarDecl> GlobalVarDeclKleene() {
-        // List of variable declarations
-        List<VarDecl> varDecls = new ArrayList<>();
-        // Type can only be of "INT_TYPE" if it is add it to the list
-        while (lex.tok().isType("INT_TYPE")) {
-            varDecls.add(VarDecl());
+        switch(lex.tok().type) {
+            case "INT_TYPE": {
+                VarDecl varDecl = GlobalVarDecl();
+                List<VarDecl> rest = GlobalVarDeclKleene();
+                rest.add(0, varDecl);
+                return rest;
+            }
+            default:
+                return new ArrayList<>();
         }
-        return varDecls;
     }
 
-    // Klenee method for the Stm statements
-    private List<Stm> StmKleene() {
-        // List to contain the Stms
-        List<Stm> stms = new ArrayList<>();
-        while (!lex.tok().isType("END") && !lex.tok().isType("RCBR") &&
-                !lex.tok().isType("CASE") && !lex.tok().isType("DEFAULT")) {
-            stms.add(Stm());
-        }
-        return stms;
-    }
-
-    // Method to parse the VarDecl for the GlobalVarDecl
-    private VarDecl VarDecl() {
-        TypeInt type = Type();
-        String name = lex.tok().image;
-        lex.eat("ID");
-        lex.eat("SEMIC");
-        return new VarDecl(type, name);
-    }
-
-    // Method to check if Type rule
-    private TypeInt Type() {
+    private Type Type() {
         lex.eat("INT_TYPE");
-        return new TypeInt();
+        Type t = new TypeInt();
+        return t;
     }
 
-    // Method to handle all Stm rules
+    private VarDecl GlobalVarDecl() {
+        Type t = Type();
+        String id = lex.eat("ID");
+        lex.eat("SEMIC");
+        return new VarDecl(t, id);
+    }
+
     private Stm Stm() {
-        // switch all cases for the different rules for the Stm cases
         switch (lex.tok().type) {
-            // assign statement
-            case "ID":
-                String var = lex.tok().image;
-                lex.eat("ID");
+            case "ID": {
+                String id = lex.eat("ID");
                 lex.eat("ASSIGN");
-                Exp expr = Exp();
+                Exp valueExpression = Exp();
                 lex.eat("SEMIC");
-                return new StmAssign(var, expr);
-            // if statement
-            case "IF":
-                lex.eat("IF");
+                return new StmAssign(id, valueExpression);
+            }
+            case "IF": {
+                lex.next();
                 lex.eat("LBR");
-                Exp cond = Exp();
+                Exp e = Exp();
                 lex.eat("RBR");
-                Stm thenBranch = Stm();
+                Stm trueBranch = Stm();
                 lex.eat("ELSE");
-                Stm elseBranch = Stm();
-                return new StmIf(cond, thenBranch, elseBranch);
-            // while statement
-            case "WHILE":
-                lex.eat("WHILE");
+                Stm falseBranch = Stm();
+                return new StmIf(e, trueBranch, falseBranch);
+            }
+            case "WHILE": {
+                lex.next();
                 lex.eat("LBR");
-                Exp whileCond = Exp();
+                Exp e = Exp();
                 lex.eat("RBR");
-                Stm whileBody = Stm();
-                return new StmWhile(whileCond, whileBody);
-            // print statement
-            case "PRINT":
-                lex.eat("PRINT");
-                Exp printExpr = Exp();
+                return new StmWhile(e, Stm());
+            }
+            case "PRINT": {
+                lex.next();
+                Exp e = Exp();
                 lex.eat("SEMIC");
-                return new StmPrint(printExpr);
-            // println statement
-            case "PRINTLN":
-                lex.eat("PRINTLN");
-                Exp printlnExpr = Exp();
+                return new StmPrint(e);
+            }
+            case "PRINTLN": {
+                lex.next();
+                Exp e = Exp();
                 lex.eat("SEMIC");
-                return new StmPrintln(printlnExpr);
-            // print ch statement
-            case "PRINTCH":
-                lex.eat("PRINTCH");
-                Exp printchExpr = Exp();
+                return new StmPrintln(e);
+            }
+            case "PRINTCH": {
+                lex.next();
+                Exp e = Exp();
                 lex.eat("SEMIC");
-                return new StmPrintChar(printchExpr);
-            // newline statement
-            case "NEWLINE":
-                lex.eat("NEWLINE");
+                return new StmPrintChar(e);
+            }
+            case "NEWLINE": {
+                lex.next();
                 lex.eat("SEMIC");
                 return new StmNewline();
-            // left curly brace statement
-            case "LCBR":
-                lex.eat("LCBR");
-                List<Stm> blockBody = StmKleene();
+            }
+            case "LCBR": {
+                lex.next();
+                List<Stm> stms = new LinkedList<>();
+                while (!lex.tok().isType("RCBR")) {
+                    stms.add(Stm());
+                }
                 lex.eat("RCBR");
-                return new StmBlock(blockBody);
-            // switch statement
-            case "SWITCH":
-                lex.eat("SWITCH");
+                return new StmBlock(stms);
+            }
+            case "SWITCH": {
+                lex.next();
                 lex.eat("LBR");
-                Exp switchExpr = Exp();
+                Exp caseExp = Exp();
                 lex.eat("RBR");
                 lex.eat("LCBR");
-                List<StmSwitch.Case> cases = CaseKleene();
+                List<StmSwitch.Case> cases = new ArrayList<>();
+                while (!lex.tok().isType("DEFAULT")) {
+                    cases.add(SwitchCase());
+                }
                 lex.eat("DEFAULT");
                 lex.eat("COLON");
-                Stm defaultStm = Stm();
+                Stm defaultCase = Stm();
                 lex.eat("RCBR");
-                return new StmSwitch(switchExpr, defaultStm, cases);
-            default:
-                throw new ParseException(lex.tok(), "statement");
-        }
-    }
-
-    // method to handle the "case" in the switch statement
-    private List<StmSwitch.Case> CaseKleene() {
-        List<StmSwitch.Case> cases = new ArrayList<>();
-        while (lex.tok().isType("CASE")) {
-            cases.add(Case());
-        }
-        return cases;
-    }
-
-
-    private StmSwitch.Case Case() {
-        lex.eat("CASE");
-
-        int sign = 1;
-        if (lex.tok().isType("MINUS")) {
-            sign = -1;
-            lex.eat("MINUS");
-        }
-
-        // Parse the integer literal for the case value
-        if (!lex.tok().isType("INTLIT")) {
-            throw new ParseException(lex.tok(), "integer literal");
-        }
-        int value = Integer.parseInt(lex.tok().image) * sign;
-        lex.eat("INTLIT");
-
-
-        lex.eat("COLON");
-
-        Stm stm = Stm();
-
-        return new StmSwitch.Case(value, stm);
-    }
-
-    // Method to handle the Exp statements with all the possibilities
-    private Exp Exp() {
-        Exp left = SimpleExp();
-        if (lex.tok().isType("ADD") || lex.tok().isType("MINUS") || lex.tok().isType("MUL") ||
-                lex.tok().isType("DIV") || lex.tok().isType("LT") || lex.tok().isType("LE") ||
-                lex.tok().isType("EQ") || lex.tok().isType("AND") || lex.tok().isType("OR")) {
-            String op = lex.tok().type;
-            lex.next();
-            Exp right = SimpleExp();
-
-            // create all possibilities for the Exp statements
-            switch (op) {
-                case "ADD":
-                    return new ExpPlus(left, right);
-                case "MINUS":
-                    return new ExpMinus(left, right);
-                case "MUL":
-                    return new ExpTimes(left, right);
-                case "DIV":
-                    return new ExpDiv(left, right);
-                case "AND":
-                    return new ExpAnd(left, right);
-                case "OR":
-                    return new ExpOr(left, right);
-                case "LT":
-                    return new ExpLessThan(left, right);
-                case "LE" :
-                    return new ExpLessThanEqual(left, right);
-                case "EQ":
-                    return new ExpEqual(left, right);
-                default:
-                    throw new ParseException(lex.tok(), "binary operator");
+                return new StmSwitch(caseExp, defaultCase, cases);
             }
+            default:
+                throw new ParseException(lex.tok(), "ID", "IF", "WHILE", "PRINT", "PRINTLN", "PRINTCH", "NEWLINE", "LCBR", "SWITCH");
         }
-        return left;
     }
 
-    // Method to handle simple exps
+    private StmSwitch.Case SwitchCase() {
+        lex.eat("CASE");
+        int caseNumber = SignedInt();
+        lex.eat("COLON");
+        Stm stm = Stm();
+        return new StmSwitch.Case(caseNumber, stm);
+    }
+
+    private int SignedInt() {
+        return OptionalSign() * Integer.parseInt(lex.eat("INTLIT"));
+    }
+
+    private int OptionalSign() {
+        switch (lex.tok().type) {
+            case "MINUS":
+                lex.next();
+                return -1;
+            default:
+                return 1;
+        }
+    }
+
+    private Exp Exp() {
+        Exp e1 = SimpleExp();
+        return OperatorClause(e1);
+    }
+
     private Exp SimpleExp() {
         switch (lex.tok().type) {
-            case "ID":
+            case "ID": {
                 String id = lex.tok().image;
-                lex.eat("ID");
+                lex.next();
                 return new ExpVar(id);
-            case "INTLIT":
-                int value = Integer.parseInt(lex.tok().image);
-                lex.eat("INTLIT");
-                return new ExpInt(value);
-            case "MINUS":
-
-                lex.eat("MINUS");
-                if (lex.tok().isType("INTLIT")) {
-                    int val = -Integer.parseInt(lex.tok().image);
-                    lex.eat("INTLIT");
-                    return new ExpInt(val);
-                } else {
-                    throw new ParseException(lex.tok(), "INTLIT");
-                }
-            case "NOT":
-                lex.eat("NOT");
-                Exp notExpr = SimpleExp();
-                return new ExpNot(notExpr);
-            case "LBR":
-                lex.eat("LBR");
-                Exp expr = Exp();
+            }
+            case "MINUS", "INTLIT": {
+                return new ExpInt(SignedInt());
+            }
+            case "NOT": {
+                lex.next();
+                return new ExpNot(SimpleExp());
+            }
+            case "LBR": {
+                lex.next();
+                Exp e = Exp();
                 lex.eat("RBR");
-                return expr;
+                return e;
+            }
             default:
-                throw new ParseException(lex.tok(), "expression");
+                throw new ParseException(lex.tok(), "ID", "MINUS", "INTLIT", "NOT", "LBR");
         }
     }
 
+    private Exp OperatorClause(Exp e) {
+        switch (lex.tok().type) {
+            case "MUL": {
+                lex.next();
+                return new ExpTimes(e, SimpleExp());
+            }
+            case "DIV": {
+                lex.next();
+                return new ExpDiv(e, SimpleExp());
+            }
+            case "MINUS": {
+                lex.next();
+                return new ExpMinus(e, SimpleExp());
+            }
+            case "ADD": {
+                lex.next();
+                return new ExpPlus(e, SimpleExp());
+            }
+            case "LT": {
+                lex.next();
+                return new ExpLessThan(e, SimpleExp());
+            }
+            case "LE": {
+                lex.next();
+                return new ExpLessThanEqual(e, SimpleExp());
+            }
+            case "EQ": {
+                lex.next();
+                return new ExpEqual(e, SimpleExp());
+            }
+            case "AND": {
+                lex.next();
+                return new ExpAnd(e, SimpleExp());
+            }
+            case "OR": {
+                lex.next();
+                return new ExpOr(e, SimpleExp());
+            }
+            default:
+                return e;
+        }
+    }
+
+    /**
+     * Parse and pretty-print an LPL source file specified
+     * by a command line argument.
+     * @param args command-line arguments
+     * @throws ParseException if the source file contains syntax errors
+     * @throws IOException
+     */
     public static void main(String[] args) throws IOException {
         if (args.length != 1) {
             System.err.println("Usage: parse.LPLParser <source-file>");

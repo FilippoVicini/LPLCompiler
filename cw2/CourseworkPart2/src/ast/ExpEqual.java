@@ -15,9 +15,7 @@ public class ExpEqual extends Exp {
     public void compile(SymbolTable st) {
         left.compile(st);
         right.compile(st);
-        emit("sub");
-        emit("test_z");
-
+        emit("sub", "test_z");
     }
 
     @Override
