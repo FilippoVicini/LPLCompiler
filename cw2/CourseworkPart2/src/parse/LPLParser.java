@@ -13,7 +13,7 @@ import java.util.List;
 /** Parse an LPL program and build its AST.  */
 public class LPLParser {
 
-    public static final String LPL_SBNF_FILE = "data/LPL.sbnf";
+    public static final String LPL_SBNF_FILE = "data/LPL-C.sbnf";
     private Lexer lex;
 
     /**

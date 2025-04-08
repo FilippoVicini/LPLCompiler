@@ -15,9 +15,11 @@ public class StmAssign extends Stm {
     @Override
     public void compile(SymbolTable st) {
         exp.compile(st);
-        emit("storei " + SymbolTable.makeVarLabel(varName));
+        emit("storei " + st.makeVarLabel(varName, null));
     }
 
     @Override
-    public <T> T accept(ast.util.Visitor<T> visitor) { return visitor.visit(this); }
+    public <T> T accept(ast.util.Visitor<T> visitor) {
+        return visitor.visit(this);
+    }
 }

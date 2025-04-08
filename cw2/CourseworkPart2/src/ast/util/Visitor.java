@@ -59,4 +59,5 @@ public interface Visitor<T> {
     T visit(ExpMethodCall expMethodCall);
     T visit(ExpNewArray expNewArray);
     T visit(ExpArrayLength expArrayLength);
+    T visit(MethodDecl methodDecl);
 }
