@@ -9,15 +9,17 @@ public class Program extends AST {
 
     public final List<VarDecl> varDecls;
     public final List<Stm> body;
+    public final List<MethodDecl> funcs;
 
     /**
      * Initialise a new Program AST.
      * @param varDecls the global variable declarations
      * @param body the statements in the main body of the program
      */
-    public Program(List<VarDecl> varDecls, List<Stm> body) {
+    public Program(List<VarDecl> varDecls, List<Stm> body, List<MethodDecl> funcs) {
         this.varDecls = varDecls;
         this.body = Collections.unmodifiableList(body);
+        this.funcs = Collections.unmodifiableList(funcs);
     }
 
     /**
@@ -25,6 +27,7 @@ public class Program extends AST {
      */
     public void compile() {
         SymbolTable st = new SymbolTable(this);
+
 
         for(Stm stm: body) {
             stm.compile(st);

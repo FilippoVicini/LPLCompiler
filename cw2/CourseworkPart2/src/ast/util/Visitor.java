@@ -53,4 +53,5 @@ public interface Visitor<T> {
     T visit(TypeInt typeInt);
 
     T visit(VarDecl varDecl);
+    T visit(StmReturn stmReturn);
 }

@@ -5,6 +5,7 @@ import sbnf.ParseException;
 import sbnf.lex.Lexer;
 
 import java.io.IOException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -49,6 +50,8 @@ public class LPLParser {
         List<VarDecl> globals = new LinkedList<>();
         // store body of the program
         List<Stm> body = new LinkedList<>();
+
+        List<MethodDecl> funcs = new LinkedList<>();
         lex.eat("BEGIN");
         while (lex.tok().isType("INT_TYPE")) {
             globals.addAll(NonFormalVarDeclKlenee());
@@ -57,7 +60,10 @@ public class LPLParser {
             body.add(Stm());
         }
         lex.eat("END");
-        return new Program(globals, body);
+        while (lex.tok().isType("FUN") || lex.tok().isType("PROC")) {
+            funcs.add(FunOrProcDef());
+        }
+        return new Program(globals, body, funcs);
     }
 
     /**
@@ -94,8 +100,8 @@ public class LPLParser {
      * @return
      */
     private Type Type() {
-            lex.eat("INT_TYPE");
-           Type baseType = new TypeInt();
+        lex.eat("INT_TYPE");
+        Type baseType = new TypeInt();
 
         while (lex.tok().type.equals("LSQBR")) {
           baseType = ArraySpec(baseType);
@@ -115,7 +121,63 @@ public class LPLParser {
         return new TypeArray(baseType);
     }
 
+    private MethodDecl FunOrProcDef() {
+        if (lex.tok().type.equals("FUN")) {
+            lex.eat("FUN");
+            Type returnType = Type();
+            return MethodDef(returnType);
+        } else{
+            lex.eat("PROC");
+            return MethodDef(null);
+        }
+    }
 
+    private MethodDecl MethodDef(Type returnType){
+        String methodName = lex.eat("ID");
+
+        lex.eat("LBR");
+        List<VarDecl> params = Formals();
+        lex.eat("RBR");
+
+        lex.eat("LCBR");
+
+        List<VarDecl> nonFormalVars = new ArrayList<>();
+        while(lex.tok().isType("INT_TYPE")) {
+            nonFormalVars.add(NonFormalVarDecl());
+        }
+        List<Stm> statements = new ArrayList<>();
+        while (!lex.tok().isType("RCBR")) {
+            statements.add(Stm());
+        }
+
+        lex.eat("RCBR");
+        return new MethodDecl(returnType, methodName, params, nonFormalVars, statements);
+
+    }
+
+    private List<VarDecl> Formals(){
+        List<VarDecl> params = new ArrayList<>();
+        if(!lex.tok().type.equals("INT_TYPE")){
+            return params;
+        }
+        Type t = Type();
+        String id = lex.eat("ID");
+        params.add(new VarDecl(t, id));
+
+        while (lex.tok().type.equals("COMMA")) {
+            VarDecl param = AnotherFormal();
+            params.add(param);
+        }
+
+        return params;
+
+    }
+    private VarDecl AnotherFormal(){
+        lex.eat("COMMA");
+        Type t = Type();
+        String id = lex.eat("ID");
+        return new VarDecl(t, id);
+    }
 
     private Stm Stm() {
         switch (lex.tok().type) {
@@ -174,6 +236,21 @@ public class LPLParser {
                 }
                 lex.eat("RCBR");
                 return new StmBlock(stms);
+            }
+            case "RETURN": {
+                lex.next();
+
+
+                if (lex.tok().isType("SEMIC")) {
+
+                    lex.eat("SEMIC");
+                    return new StmReturn(null);
+                } else {
+
+                    Exp returnExp = Exp();
+                    lex.eat("SEMIC");
+                    return new StmReturn(returnExp);
+                }
             }
             case "SWITCH": {
                 lex.next();
