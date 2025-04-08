@@ -179,14 +179,57 @@ public class LPLParser {
         return new VarDecl(t, id);
     }
 
+    private Stm StmIdFactor(String id) {
+        if (lex.tok().type.equals("LBR")) {
+
+            lex.eat("LBR");
+            List<Exp> actuals = Actuals();
+            lex.eat("RBR");
+            lex.eat("SEMIC");
+            return new StmMethodCall(id, actuals);
+        } else {
+
+            List<Exp> indexers = new ArrayList<>();
+            while (lex.tok().type.equals("LSQBR")) {
+                indexers.add(Indexer());
+            }
+
+            lex.eat("ASSIGN");
+            Exp valueExpression = Exp();
+            lex.eat("SEMIC");
+
+            if (indexers.isEmpty()) {
+                return new StmAssign(id, valueExpression);
+            } else {
+                return new StmArrayAssign(id, indexers, valueExpression);
+            }
+        }
+    }
+
+    private List<Exp> Actuals() {
+        List<Exp> actuals = new ArrayList<>();
+
+        // Check if there are no parameters (right bracket immediately follows left bracket)
+        if (!lex.tok().isType("RBR")) {
+            actuals.add(Exp());
+
+            while (lex.tok().isType("COMMA")) {
+                actuals.add(AnotherActual());
+            }
+        }
+
+        return actuals;
+    }
+
+    private Exp AnotherActual() {
+        lex.eat("COMMA");
+        return Exp();
+    }
     private Stm Stm() {
         switch (lex.tok().type) {
             case "ID": {
                 String id = lex.eat("ID");
-                lex.eat("ASSIGN");
-                Exp valueExpression = Exp();
-                lex.eat("SEMIC");
-                return new StmAssign(id, valueExpression);
+                return StmIdFactor(id);
             }
             case "IF": {
                 lex.next();
@@ -273,6 +316,13 @@ public class LPLParser {
         }
     }
 
+    private Exp Indexer() {
+        lex.eat("LSQBR");
+        Exp index = Exp();
+        lex.eat("RSQBR");
+        return index;
+    }
+
     private StmSwitch.Case SwitchCase() {
         lex.eat("CASE");
         int caseNumber = SignedInt();
@@ -305,14 +355,22 @@ public class LPLParser {
             case "ID": {
                 String id = lex.tok().image;
                 lex.next();
-                return new ExpVar(id);
+                return SimpleIdFactor(id);
             }
             case "MINUS", "INTLIT": {
                 return new ExpInt(SignedInt());
             }
+            case "NEW": {
+                lex.next();
+                return NewArrayExp();
+            }
             case "NOT": {
                 lex.next();
                 return new ExpNot(SimpleExp());
+            }
+            case "NULL": {
+                lex.next();
+                return null;
             }
             case "LBR": {
                 lex.next();
@@ -321,8 +379,68 @@ public class LPLParser {
                 return e;
             }
             default:
-                throw new ParseException(lex.tok(), "ID", "MINUS", "INTLIT", "NOT", "LBR");
+                throw new ParseException(lex.tok(), "ID", "MINUS", "INTLIT", "NEW", "NOT", "NULL", "LBR");
         }
+    }
+
+    private Exp SimpleIdFactor(String id) {
+        // Handle function calls
+        if (lex.tok().type.equals("LBR")) {
+            lex.eat("LBR");
+            List<Exp> actuals = Actuals();
+            lex.eat("RBR");
+            return new ExpMethodCall(id, actuals);
+        }
+
+        // Handle array access
+        List<Exp> indexers = new ArrayList<>();
+        while (lex.tok().type.equals("LSQBR")) {
+            indexers.add(Indexer());
+        }
+
+        // Create base expression (either variable or array access)
+        Exp baseExp;
+        if (indexers.isEmpty()) {
+            baseExp = new ExpVar(id);
+        } else {
+            baseExp = new ExpArrayAccess(id, indexers);
+        }
+
+        // Apply SimpleIdLexprFactor to the base expression
+        return SimpleIdLexprFactor(baseExp);
+    }
+
+    private Exp SimpleIdLexprFactor(Exp baseExp) {
+        // Check if we have a DOT LENGTH access
+        if (lex.tok().type.equals("DOT")) {
+            lex.eat("DOT");
+            lex.eat("LENGTH");
+            return new ExpArrayLength(baseExp);
+        }
+
+        // Default case: just return the base expression unchanged
+        return baseExp;
+    }
+
+
+    private Exp NewArrayExp() {
+        lex.eat("INT_TYPE");
+
+        List<Exp> dimensions = new ArrayList<>();
+
+        // Process first dimension with expression
+        lex.eat("LSQBR");
+        dimensions.add(Exp());
+        lex.eat("RSQBR");
+
+        // Process additional empty dimensions (ArraySpec*)
+        while (lex.tok().type.equals("LSQBR")) {
+            lex.eat("LSQBR");
+            lex.eat("RSQBR");  // No expression here, just empty brackets
+            dimensions.add(null);  // Or some placeholder to indicate an empty dimension
+        }
+
+        return new ExpNewArray(new TypeInt(), dimensions);
     }
 
     private Exp OperatorClause(Exp e) {

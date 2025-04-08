@@ -132,4 +132,28 @@ public class VisitorAdapter<T> implements Visitor<T> {
     public T visit(StmReturn stmReturn) {
         return null;
     }
+
+    @Override
+    public T visit(StmMethodCall stmMethodCall) {
+        return null;
+    }
+
+    @Override
+    public T visit(ExpArrayAccess expArrayAccess) {
+        return null;
+    }
+    @Override
+    public T visit(ExpMethodCall expMethodCall) {
+        return null;
+    }
+    @Override
+    public T visit(ExpNewArray expNewArray) {
+        return null;
+    }
+    @Override
+    public T visit(ExpArrayLength expArrayLength) {
+        return null;
+    }
+
+
 }

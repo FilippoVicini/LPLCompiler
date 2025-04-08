@@ -54,4 +54,9 @@ public interface Visitor<T> {
 
     T visit(VarDecl varDecl);
     T visit(StmReturn stmReturn);
+    T visit(StmMethodCall stmMethodCall);
+    T visit(ExpArrayAccess expArrayAccess);
+    T visit(ExpMethodCall expMethodCall);
+    T visit(ExpNewArray expNewArray);
+    T visit(ExpArrayLength expArrayLength);
 }
