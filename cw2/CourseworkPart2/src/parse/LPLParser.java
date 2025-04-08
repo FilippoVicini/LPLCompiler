@@ -39,12 +39,19 @@ public class LPLParser {
         return prog;
     }
 
+    /**
+     * Entry point of the Language
+     * Structure = Program -> BEGIN NonFormalVarDecl* Stm* END FunOrProcDef*
+     * @return
+     */
     private Program Program() {
+        // store global variables
         List<VarDecl> globals = new LinkedList<>();
+        // store body of the program
         List<Stm> body = new LinkedList<>();
         lex.eat("BEGIN");
         while (lex.tok().isType("INT_TYPE")) {
-            globals.add(GlobalVarDecl());
+            globals.addAll(NonFormalVarDeclKlenee());
         }
         while (!lex.tok().isType("END")) {
             body.add(Stm());
@@ -53,31 +60,62 @@ public class LPLParser {
         return new Program(globals, body);
     }
 
-    private List<VarDecl> GlobalVarDeclKleene() {
-        switch(lex.tok().type) {
-            case "INT_TYPE": {
-                VarDecl varDecl = GlobalVarDecl();
-                List<VarDecl> rest = GlobalVarDeclKleene();
-                rest.add(0, varDecl);
-                return rest;
-            }
-            default:
-                return new ArrayList<>();
+    /**
+     * Klenee for Variable Declarations
+     * @return
+     */
+    private List<VarDecl> NonFormalVarDeclKlenee() {
+        List<VarDecl> varDecls = new ArrayList<>();
+
+        // Loop as long as we see INT_TYPE
+        while (lex.tok().isType("INT_TYPE")) {
+            varDecls.add(NonFormalVarDecl());
         }
+
+        return varDecls;
     }
 
-    private Type Type() {
-        lex.eat("INT_TYPE");
-        Type t = new TypeInt();
-        return t;
-    }
-
-    private VarDecl GlobalVarDecl() {
+    /**
+     * Handle the Type token
+     * format = NonFormalVarDecl -> Type ID SEMIC
+     * Where type can be INT_TYPE ArraySpec*
+     * @return
+     */
+    private VarDecl NonFormalVarDecl() {
         Type t = Type();
         String id = lex.eat("ID");
         lex.eat("SEMIC");
         return new VarDecl(t, id);
     }
+
+    /**
+     * Handle Type either INT_TYPE which represents int
+     * or ArraySpec* which represents an array of ints
+     * @return
+     */
+    private Type Type() {
+            lex.eat("INT_TYPE");
+           Type baseType = new TypeInt();
+
+        while (lex.tok().type.equals("LSQBR")) {
+          baseType = ArraySpec(baseType);
+        }
+        return baseType;
+    }
+
+    /**
+     * Handle creating an array of ints
+     * @param baseType
+     * @return
+     */
+    private TypeArray ArraySpec(Type baseType) {
+        lex.eat("LSQBR");
+        lex.eat("RSQBR");
+
+        return new TypeArray(baseType);
+    }
+
+
 
     private Stm Stm() {
         switch (lex.tok().type) {
