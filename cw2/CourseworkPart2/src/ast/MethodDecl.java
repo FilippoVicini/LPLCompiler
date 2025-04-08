@@ -1,4 +1,7 @@
+
 package ast;
+
+import compile.SymbolTable;
 
 import java.util.List;
 import java.util.Collections;
@@ -35,14 +38,24 @@ public class MethodDecl extends AST {
         return name;
     }
 
-    /**
-     * Gets the method's return type.
-     * @return the return type
-     */
-    public Type getReturnType() {
-        return returnType;
-    }
+    public void compileBody(SymbolTable st) {
+        // Compile all statements in the method body
+        for (Stm stm : statements) {
+            stm.compile(st);
+        }
 
+        // Check if the last statement is a return
+        boolean hasExplicitReturn = !statements.isEmpty() && statements.get(statements.size() - 1) instanceof StmReturn;
+
+        // If the method doesn't end with a return, add a default one
+        if (!hasExplicitReturn) {
+            // Default return value
+            emit("push 0");
+
+            // Return from method
+            emit("ret");
+        }
+    }
     /**
      * Gets the list of parameter declarations.
      * @return an unmodifiable list of parameter declarations
@@ -67,76 +80,5 @@ public class MethodDecl extends AST {
         return Collections.unmodifiableList(statements);
     }
 
-    /**
-     * Gets the number of parameters for this method.
-     * @return the number of parameters
-     */
-    public int getParameterCount() {
-        return params.size();
-    }
 
-    /**
-     * Gets the number of local variables for this method.
-     * @return the number of local variables
-     */
-    public int getLocalCount() {
-        return locals.size();
-    }
-
-    /**
-     * Checks if this method has a return type of void.
-     * @return true if the method returns void, false otherwise
-     */
-
-
-    /**
-     * Returns a parameter declaration by index.
-     * @param index the index of the parameter
-     * @return the parameter declaration at the given index
-     * @throws IndexOutOfBoundsException if the index is out of range
-     */
-    public VarDecl getParameter(int index) {
-        return params.get(index);
-    }
-
-    /**
-     * Returns a local variable declaration by index.
-     * @param index the index of the local variable
-     * @return the local variable declaration at the given index
-     * @throws IndexOutOfBoundsException if the index is out of range
-     */
-    public VarDecl getLocal(int index) {
-        return locals.get(index);
-    }
-
-    @Override
-    public <T> T accept(ast.util.Visitor<T> visitor) {
-        return visitor.visit(this);
-    }
-
-    @Override
-    public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append(returnType).append(" ").append(name).append("(");
-
-        // Add parameters
-        for (int i = 0; i < params.size(); i++) {
-            if (i > 0) sb.append(", ");
-            sb.append(params.get(i));
-        }
-        sb.append(") {\n");
-
-        // Add local variables
-        for (VarDecl local : locals) {
-            sb.append("  ").append(local).append(";\n");
-        }
-
-        // Add statements
-        for (Stm statement : statements) {
-            sb.append("  ").append(statement).append("\n");
-        }
-        sb.append("}");
-
-        return sb.toString();
-    }
 }

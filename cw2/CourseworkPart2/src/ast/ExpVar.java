@@ -3,77 +3,97 @@ package ast;
 import compile.SymbolTable;
 
 public class ExpVar extends Exp {
-    private String currentMethod; // Track current method context
     public final String varName;
 
     public ExpVar(String varName) {
         this.varName = varName;
     }
 
-    /**
-     * Sets the current method context for variable resolution
-     * @param methodName the name of the method being compiled
-     */
-    public void setMethodContext(String methodName) {
-        this.currentMethod = methodName;
-    }
-
     @Override
     public void compile(SymbolTable st) {
-        // Get the type to ensure variable exists and determine scope
-        st.getVarType(currentMethod, varName);
+        // Try to find the variable in the current method context
+        String methodName = st.getCurrentMethodFromContextStack();
 
-        // Generate the appropriate load instruction based on variable scope
-        if (st.isGlobal(varName)) {
-            // Global variable access
-            emit("loadi " + st.makeVarLabel(varName, null));
-        } else if (st.isLocal(currentMethod, varName)) {
-            // Local variable access
-            emit("load " + getLocalOffset(st, varName));
-        } else if (st.isParameter(currentMethod, varName)) {
-            // Parameter access - parameters are above the frame pointer
-            emit("loadl " + getParameterOffset(st, varName));
-        } else {
-            // This shouldn't happen as getVarType would have thrown an exception
-            throw new RuntimeException("Unexpected variable scope for: " + varName);
-        }
-    }
-
-    /**
-     * Calculate the offset for a local variable relative to the frame pointer
-     */
-    private int getLocalOffset(SymbolTable st, String varName) {
-        int offset = 0;
-        for (String local : st.getMethodLocalNames(currentMethod)) {
-            if (local.equals(varName)) {
-                return offset;
+        if (methodName != null) {
+            // Check if it's a parameter
+            if (st.getMethodParameterNames(methodName).contains(varName)) {
+                // For parameters, we need to access them on the stack
+                // We can use load with the appropriate offset from SP
+                emit("get_sp");
+                int offset = getParameterOffset(st, methodName, varName);
+                emit("push " + offset);
+                emit("add");
+                emit("load");
+                return;
             }
-            offset++;
+
+            // Check if it's a local variable
+            if (st.getMethodLocalNames(methodName).contains(varName)) {
+                // For locals, we need to access them on the stack relative to SP
+                emit("get_sp");  // Get current stack pointer
+                int offset = getLocalOffset(st, methodName, varName);
+                emit("push " + offset);
+                emit("add");
+                emit("load");    // Load value from calculated address
+                return;
+            }
         }
-        throw new RuntimeException("Local variable not found: " + varName);
+
+        // Not found in method scope, check if it's a global variable
+        if (st.globalNames().contains(varName)) {
+            // Load from absolute memory address
+            emit("loadi " + st.makeVarLabel(varName));
+            return;
+        }
+
+        // Variable not found in any scope
+        throw new compile.StaticAnalysisException("Undeclared variable: " + varName);
     }
 
     /**
-     * Calculate the offset for a parameter relative to the frame pointer
+     * Calculate the offset for a parameter relative to the stack pointer
      */
-    private int getParameterOffset(SymbolTable st, String varName) {
-        int offset = 2;
-        for (String param : st.getMethodParameterNames(currentMethod)) {
+    private int getParameterOffset(SymbolTable st, String methodName, String varName) {
+        // Parameters are accessed from the call stack
+        int paramCount = st.getMethodParameterNames(methodName).size();
+
+        // Find parameter index
+        int paramIndex = 0;
+        for (String param : st.getMethodParameterNames(methodName)) {
             if (param.equals(varName)) {
-                return offset;
+                break;
             }
-            offset++;
+            paramIndex++;
         }
-        throw new RuntimeException("Parameter not found: " + varName);
+
+        // Calculate offset from SP
+        // Here we need to account for all stack elements between SP and the parameter
+        return paramCount - paramIndex - 1;
+    }
+
+    /**
+     * Calculate the offset for a local variable relative to the stack pointer
+     */
+    private int getLocalOffset(SymbolTable st, String methodName, String varName) {
+        // Locals are accessed from the stack
+        int paramCount = st.getMethodParameterNames(methodName).size();
+
+        // Find local index
+        int localIndex = 0;
+        for (String local : st.getMethodLocalNames(methodName)) {
+            if (local.equals(varName)) {
+                break;
+            }
+            localIndex++;
+        }
+
+        // Calculate offset from SP
+        // Locals are stored before parameters in the stack
+        return paramCount + localIndex;
     }
 
     @Override
     public <T> T accept(ast.util.Visitor<T> visitor) {
         return visitor.visit(this);
-    }
-
-    @Override
-    public String toString() {
-        return varName;
     }
 }
