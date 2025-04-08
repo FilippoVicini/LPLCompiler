@@ -3,6 +3,7 @@ package compile;
 import ast.Program;
 import ast.Type;
 import ast.VarDecl;
+import ast.MethodDecl;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -12,7 +13,7 @@ import java.util.Set;
 public class SymbolTable {
 
     private Map<String, Type> globals;
-
+    private Map<String, Type> methods;
     private int freshNameCounter;
 
     /**
@@ -22,10 +23,19 @@ public class SymbolTable {
     public SymbolTable(Program program) {
         this.freshNameCounter = 0;
         this.globals = new HashMap<>();
+        this.methods = new HashMap<>();
+
         for (VarDecl decl: program.varDecls) {
             Type duplicate = this.globals.put(decl.name, decl.type);
             if (duplicate != null) {
                 throw new StaticAnalysisException("Duplicate global variable: " + decl.name);
+            }
+        }
+
+        for (MethodDecl method : program.funcs) {
+            Type duplicate = this.methods.put(method.name, method.returnType);
+            if (duplicate != null) {
+                throw new StaticAnalysisException("Duplicate method declaration: " + method.name);
             }
         }
     }
@@ -70,5 +80,14 @@ public class SymbolTable {
      */
     public String freshLabel(String prefix) {
         return "$$_" + prefix + "_" + (freshNameCounter++);
+    }
+
+    /**
+     * Get the SSM label for a method.
+     * @param name the method name
+     * @return method name prefixed with "$_"
+     */
+    public String methodLabel(String name) {
+        return "$_" + name;
     }
 }

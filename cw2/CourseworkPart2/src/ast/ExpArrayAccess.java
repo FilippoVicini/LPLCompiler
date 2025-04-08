@@ -24,19 +24,15 @@ public class ExpArrayAccess extends Exp {
 
     @Override
     public void compile(SymbolTable st) {
-        // Load base address of the array
         emit("load " + id);
 
-        // Handle each indexer
         for (Exp indexer : indexers) {
-            // Compute the index
+
             indexer.compile(st);
 
-            // Index into the array
             emit("array_index");
         }
 
-        // Load the value at the calculated address
         emit("load_indirect");
     }
 

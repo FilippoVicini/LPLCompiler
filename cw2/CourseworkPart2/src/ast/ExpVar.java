@@ -12,10 +12,11 @@ public class ExpVar extends Exp {
 
     @Override
     public void compile(SymbolTable st) {
-        // force an exception if varName has no declaration
+
         st.getVarType(varName);
-        // global variable, statically allocated
+
         emit("loadi " + st.makeVarLabel(varName));
+
     }
 
     @Override

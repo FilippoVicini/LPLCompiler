@@ -22,21 +22,17 @@ public class ExpMethodCall extends Exp {
         this.arguments = arguments;
     }
 
+    // push size of arguments
     @Override
     public void compile(SymbolTable st) {
-        // Push arguments in reverse order
         for (int i = arguments.size() - 1; i >= 0; i--) {
             arguments.get(i).compile(st);
-            emit("push");
         }
 
-        // Call the method
-        emit("call " + methodName);
+        emit("push " + arguments.size());
 
-        // Clean up the stack if there are arguments
-        if (!arguments.isEmpty()) {
-            emit("pop " + arguments.size());
-        }
+
+        emit("calli " + st.methodLabel(methodName));
     }
 
     @Override
@@ -44,19 +40,5 @@ public class ExpMethodCall extends Exp {
         return visitor.visit(this);
     }
 
-    @Override
-    public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append(methodName).append('(');
 
-        for (int i = 0; i < arguments.size(); i++) {
-            if (i > 0) {
-                sb.append(", ");
-            }
-            sb.append(arguments.get(i));
-        }
-
-        sb.append(')');
-        return sb.toString();
-    }
 }

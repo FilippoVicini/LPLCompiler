@@ -17,11 +17,9 @@ public class StmMethodCall extends Stm {
 
     @Override
     public void compile(SymbolTable st) {
-
         for (int i = arguments.size() - 1; i >= 0; i--) {
             arguments.get(i).compile(st);
         }
-
 
         emit("call " + methodName);
 

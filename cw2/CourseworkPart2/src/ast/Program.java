@@ -27,7 +27,10 @@ public class Program extends AST {
      */
     public void compile() {
         SymbolTable st = new SymbolTable(this);
-
+        for(MethodDecl m : funcs) {
+            String mL = st.methodLabel(m.getName());
+           // emit(mL + ":");
+        }
 
         for(Stm stm: body) {
             stm.compile(st);

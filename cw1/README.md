@@ -1,6 +1,7 @@
-# LPLCompiler
-This is the `IN2009` coursework about language processors. This is specifically part 1 of the cw and covers abstract sytax trees
+# LPLCompiler part 1
+This is the `IN2009` coursework part 1 about language processors. This is specifically part 1 of the cw and covers abstract sytax trees
 compilers and parsers. 
+It will only implement a small part of the language and not include arrays and methods
 ## Tasks
 This coursework involves mainly 3 tasks:
 - Write java code to build AST's in `handbuilt` package

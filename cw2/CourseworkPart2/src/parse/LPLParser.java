@@ -21,6 +21,7 @@ public class LPLParser {
      */
     public LPLParser() {
         lex = new Lexer(LPL_SBNF_FILE);
+
     }
 
     /** Parse an LPL source file and return its AST.
@@ -54,7 +55,7 @@ public class LPLParser {
         List<MethodDecl> methods = new LinkedList<>();
         lex.eat("BEGIN");
         while (lex.tok().isType("INT_TYPE")) {
-            globals.addAll(NonFormalVarDeclKlenee());
+            globals.add(NonFormalVarDecl());
         }
         while (!lex.tok().isType("END")) {
             body.add(Stm());
@@ -201,19 +202,19 @@ public class LPLParser {
             return new StmMethodCall(id, actuals);
         } else {
 
-            List<Exp> indexers = new ArrayList<>();
+            List<Exp> idx = new ArrayList<>();
             while (lex.tok().type.equals("LSQBR")) {
-                indexers.add(Indexer());
+                idx.add(Indexer());
             }
 
             lex.eat("ASSIGN");
-            Exp valueExpression = Exp();
+            Exp exps = Exp();
             lex.eat("SEMIC");
 
-            if (indexers.isEmpty()) {
-                return new StmAssign(id, valueExpression);
+            if (idx.isEmpty()) {
+                return new StmAssign(id, exps);
             } else {
-                return new StmArrayAssign(id, indexers, valueExpression);
+                return new StmArrayAssign(id, idx, exps);
             }
         }
     }
