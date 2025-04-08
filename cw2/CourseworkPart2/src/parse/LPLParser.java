@@ -41,7 +41,7 @@ public class LPLParser {
     }
 
     /**
-     * Entry point of the Language
+     * Entry point
      * Structure = Program -> BEGIN NonFormalVarDecl* Stm* END FunOrProcDef*
      * @return
      */
@@ -50,8 +50,8 @@ public class LPLParser {
         List<VarDecl> globals = new LinkedList<>();
         // store body of the program
         List<Stm> body = new LinkedList<>();
-
-        List<MethodDecl> funcs = new LinkedList<>();
+        // store methods of the program
+        List<MethodDecl> methods = new LinkedList<>();
         lex.eat("BEGIN");
         while (lex.tok().isType("INT_TYPE")) {
             globals.addAll(NonFormalVarDeclKlenee());
@@ -61,19 +61,18 @@ public class LPLParser {
         }
         lex.eat("END");
         while (lex.tok().isType("FUN") || lex.tok().isType("PROC")) {
-            funcs.add(FunOrProcDef());
+            methods.add(FunOrProcDef());
         }
-        return new Program(globals, body, funcs);
+        return new Program(globals, body, methods);
     }
 
     /**
      * Klenee for Variable Declarations
-     * @return
      */
     private List<VarDecl> NonFormalVarDeclKlenee() {
         List<VarDecl> varDecls = new ArrayList<>();
 
-        // Loop as long as we see INT_TYPE
+        // Loop as long as there is INT_TYPE
         while (lex.tok().isType("INT_TYPE")) {
             varDecls.add(NonFormalVarDecl());
         }
@@ -85,7 +84,6 @@ public class LPLParser {
      * Handle the Type token
      * format = NonFormalVarDecl -> Type ID SEMIC
      * Where type can be INT_TYPE ArraySpec*
-     * @return
      */
     private VarDecl NonFormalVarDecl() {
         Type t = Type();
@@ -97,7 +95,6 @@ public class LPLParser {
     /**
      * Handle Type either INT_TYPE which represents int
      * or ArraySpec* which represents an array of ints
-     * @return
      */
     private Type Type() {
         lex.eat("INT_TYPE");
@@ -110,9 +107,7 @@ public class LPLParser {
     }
 
     /**
-     * Handle creating an array of ints
-     * @param baseType
-     * @return
+     * Handler to create an array of ints
      */
     private TypeArray ArraySpec(Type baseType) {
         lex.eat("LSQBR");
@@ -121,6 +116,10 @@ public class LPLParser {
         return new TypeArray(baseType);
     }
 
+    /**
+     * Handler to manage method declaration either FUN(return type) or PROC(no retrun type)
+     * @return
+     */
     private MethodDecl FunOrProcDef() {
         if (lex.tok().type.equals("FUN")) {
             lex.eat("FUN");
@@ -132,6 +131,9 @@ public class LPLParser {
         }
     }
 
+    /**
+     * Method definition for the language
+     */
     private MethodDecl MethodDef(Type returnType){
         String methodName = lex.eat("ID");
 
@@ -155,6 +157,9 @@ public class LPLParser {
 
     }
 
+    /**
+     * Method to handle parameters for the method
+     */
     private List<VarDecl> Formals(){
         List<VarDecl> params = new ArrayList<>();
         if(!lex.tok().type.equals("INT_TYPE")){
@@ -172,6 +177,10 @@ public class LPLParser {
         return params;
 
     }
+
+    /**
+     * Method to handle multiple parameters in the method
+     */
     private VarDecl AnotherFormal(){
         lex.eat("COMMA");
         Type t = Type();
@@ -179,6 +188,9 @@ public class LPLParser {
         return new VarDecl(t, id);
     }
 
+    /**
+     * Method to manage both method calls and vars assignments
+     */
     private Stm StmIdFactor(String id) {
         if (lex.tok().type.equals("LBR")) {
 
@@ -206,10 +218,12 @@ public class LPLParser {
         }
     }
 
+    /**
+     * Handles parameters in function call
+     */
     private List<Exp> Actuals() {
         List<Exp> actuals = new ArrayList<>();
 
-        // Check if there are no parameters (right bracket immediately follows left bracket)
         if (!lex.tok().isType("RBR")) {
             actuals.add(Exp());
 
@@ -221,10 +235,17 @@ public class LPLParser {
         return actuals;
     }
 
+    /**
+     * Handles multiple parameters calls
+     */
     private Exp AnotherActual() {
         lex.eat("COMMA");
         return Exp();
     }
+
+    /**
+     * Handle all types of statements
+     */
     private Stm Stm() {
         switch (lex.tok().type) {
             case "ID": {
@@ -282,14 +303,10 @@ public class LPLParser {
             }
             case "RETURN": {
                 lex.next();
-
-
                 if (lex.tok().isType("SEMIC")) {
-
                     lex.eat("SEMIC");
                     return new StmReturn(null);
                 } else {
-
                     Exp returnExp = Exp();
                     lex.eat("SEMIC");
                     return new StmReturn(returnExp);
@@ -316,6 +333,9 @@ public class LPLParser {
         }
     }
 
+    /**
+     * Indexer for array assignments
+     */
     private Exp Indexer() {
         lex.eat("LSQBR");
         Exp index = Exp();
@@ -345,11 +365,17 @@ public class LPLParser {
         }
     }
 
+    /**
+     * Initial handler for expressions
+     */
     private Exp Exp() {
         Exp e1 = SimpleExp();
         return OperatorClause(e1);
     }
 
+    /**
+     * Simple Expressions handler
+     */
     private Exp SimpleExp() {
         switch (lex.tok().type) {
             case "ID": {
@@ -383,8 +409,10 @@ public class LPLParser {
         }
     }
 
+    /**
+     * Handle ID statements either array access or method calls
+     */
     private Exp SimpleIdFactor(String id) {
-        // Handle function calls
         if (lex.tok().type.equals("LBR")) {
             lex.eat("LBR");
             List<Exp> actuals = Actuals();
@@ -392,13 +420,11 @@ public class LPLParser {
             return new ExpMethodCall(id, actuals);
         }
 
-        // Handle array access
         List<Exp> indexers = new ArrayList<>();
         while (lex.tok().type.equals("LSQBR")) {
             indexers.add(Indexer());
         }
 
-        // Create base expression (either variable or array access)
         Exp baseExp;
         if (indexers.isEmpty()) {
             baseExp = new ExpVar(id);
@@ -406,43 +432,50 @@ public class LPLParser {
             baseExp = new ExpArrayAccess(id, indexers);
         }
 
-        // Apply SimpleIdLexprFactor to the base expression
         return SimpleIdLexprFactor(baseExp);
     }
 
+    /**
+     * Handle array methods calls
+     */
     private Exp SimpleIdLexprFactor(Exp baseExp) {
-        // Check if we have a DOT LENGTH access
         if (lex.tok().type.equals("DOT")) {
             lex.eat("DOT");
             lex.eat("LENGTH");
             return new ExpArrayLength(baseExp);
         }
 
-        // Default case: just return the base expression unchanged
         return baseExp;
     }
 
 
+    /**
+     * Handle creation of new array
+     * @return
+     */
     private Exp NewArrayExp() {
         lex.eat("INT_TYPE");
 
         List<Exp> dimensions = new ArrayList<>();
 
-        // Process first dimension with expression
         lex.eat("LSQBR");
         dimensions.add(Exp());
         lex.eat("RSQBR");
 
-        // Process additional empty dimensions (ArraySpec*)
+
         while (lex.tok().type.equals("LSQBR")) {
             lex.eat("LSQBR");
-            lex.eat("RSQBR");  // No expression here, just empty brackets
-            dimensions.add(null);  // Or some placeholder to indicate an empty dimension
+            lex.eat("RSQBR");
+            dimensions.add(null);
         }
 
         return new ExpNewArray(new TypeInt(), dimensions);
     }
 
+
+    /**
+     * All possible operators
+     */
     private Exp OperatorClause(Exp e) {
         switch (lex.tok().type) {
             case "MUL": {
