@@ -1,7 +1,6 @@
 package ast;
 
 import compile.SymbolTable;
-import compile.VarInfo;
 
 import java.util.Objects;
 
@@ -21,30 +20,27 @@ public class StmAssign extends Stm {
     public void compile(SymbolTable st) {
         exp.compile(st);
 
-        VarInfo i = st.getVarInfo(varName);
-
-        if(Objects.equals(st.getVarInfo(varName).getVarInfo(), INFO_GLOBALS)) {
+        if(Objects.equals(st.getVarI(varName).getVarI(), INFO_GLOBALS)) {
             emit("get_dp");
-            emit("push " + i.getOffset());
+            emit("push " + st.getVarI(varName).getOffset());
             emit("add");
             emit("swap");
             emit("store");
-        }else if(Objects.equals(st.getVarInfo(varName).getVarInfo(), INFO_LOCALS)) {
+        }else if(Objects.equals(st.getVarI(varName).getVarI(), INFO_LOCALS)) {
             emit("get_fp");
-            emit("push " + (-4 * i.getOffset()));
+            emit("push " + (-4 * st.getVarI(varName).getOffset()));
             emit("add");
             emit("swap");
             emit("store");
         }else {
             emit("get_fp");
-            emit("push " + (4 * i.getOffset()));
+            emit("push " + (4 * st.getVarI(varName).getOffset()));
             emit("add");
             emit("swap");
             emit("store");
         }
 
-        }
-
+    }
 
     @Override
     public <T> T accept(ast.util.Visitor<T> visitor) {

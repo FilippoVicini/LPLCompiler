@@ -14,10 +14,6 @@ public class ExpArrayLength extends Exp {
     }
 
 
-    public Exp getArray() {
-        return array;
-    }
-
     @Override
     public void compile(SymbolTable st) {
         array.compile(st);

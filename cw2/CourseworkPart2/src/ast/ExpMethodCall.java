@@ -23,7 +23,6 @@ public class ExpMethodCall extends Exp {
             arguments.get(i).compile(st);
         }
 
-
         emit("push " + arguments.size());
 
 

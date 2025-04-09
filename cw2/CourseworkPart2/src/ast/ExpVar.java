@@ -17,16 +17,16 @@ public class ExpVar extends Exp {
 
     @Override
     public void compile(SymbolTable st) {
-        VarInfo i = st.getVarInfo(varName);
+        VarInfo i = st.getVarI(varName);
 
-        if(Objects.equals(i.getVarInfo(), INFO_GLOBALS))
+        if(Objects.equals(i.getVarI(), INFO_GLOBALS))
         {
             emit("get_dp");
             emit("push " + i.getOffset());
             emit("add");
             emit("load");
 
-        } else if (Objects.equals(i.getVarInfo(), INFO_LOCALS)) {
+        } else if (Objects.equals(i.getVarI(), INFO_LOCALS)) {
             emit("get_fp");
             emit("push " + (-4 * i.getOffset()));
             emit("add");

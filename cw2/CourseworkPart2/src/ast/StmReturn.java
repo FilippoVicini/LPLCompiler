@@ -18,8 +18,8 @@ public class StmReturn extends Stm {
                 emit("push 0");
             }
 
-            int numParams = st.getParamCountForCurrentMethod();
-            int numLocals = st.getLocalCountForCurrentMethod();
+            int numParams = st.getPCountCurrMethod();
+            int numLocals = st.getLCountCurrMethod();
             emit("push " + (numParams + numLocals));
 
             emit("ret");

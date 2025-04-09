@@ -16,7 +16,7 @@ public class VarInfo {
         this.off = offset;
         this.type = type;
     }
-    public String getVarInfo() { return varInfo; }
+    public String getVarI() { return varInfo; }
     public Type getType() { return type; }
     public int getOffset() { return off; }
 

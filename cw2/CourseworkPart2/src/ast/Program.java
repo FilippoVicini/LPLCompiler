@@ -27,8 +27,8 @@ public class Program extends AST {
         SymbolTable st = new SymbolTable(this);
 
         for (VarDecl globalVar : varDecls) {
-            VarInfo info = st.getVarInfo(globalVar.name);
-            if (info != null && info.getVarInfo() == INFO_GLOBALS) {
+            VarInfo info = st.getVarI(globalVar.name);
+            if (info != null && info.getVarI() == INFO_GLOBALS) {
                 emit("push 0");
                 emit("get_dp");
                 emit("push " + info.getOffset());
@@ -47,16 +47,16 @@ public class Program extends AST {
             String methodLabel = st.getMethodLabel(method.getMethodName());
             emit(methodLabel + ":");
 
-            st.enterMethodScope(method.getMethodName());
+            st.enterMethod(method.getMethodName());
 
-            int numLocals = st.getLocalCountForCurrentMethod();
+            int numLocals = st.getLCountCurrMethod();
             if (numLocals > 0) {
                 emit("salloc " + numLocals);
             }
 
             method.compileBody(st);
 
-            st.exitMethodScope();
+            st.exitMethod();
         }
     }
 
