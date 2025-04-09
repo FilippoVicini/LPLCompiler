@@ -1,96 +1,36 @@
 package ast;
 
 import compile.SymbolTable;
-
 import java.util.List;
 import java.util.Collections;
 
-public class MethodDecl extends AST {
-    public Type returnType;
-    public String name;
-    private List<VarDecl> params;
-    private List<VarDecl> locals;
-    private List<Stm> statements;
+public abstract class MethodDecl extends AST {
+    public final String id;
+    public final List<Formal> formals;
+    public final List<VarDecl> locals;
+    public final List<Stm> body;
 
-    /**
-     * Creates a new method declaration.
-     * @param returnType the return type of the method
-     * @param name the name of the method
-     * @param params the list of parameter declarations
-     * @param locals the list of local variable declarations
-     * @param statements the list of statements in the method body
-     */
-    public MethodDecl(Type returnType, String name, List<VarDecl> params,
-                      List<VarDecl> locals, List<Stm> statements) {
-        this.returnType = returnType;
-        this.name = name;
-        this.params = params != null ? params : Collections.emptyList();
-        this.locals = locals != null ? locals : Collections.emptyList();
-        this.statements = statements != null ? statements : Collections.emptyList();
+    public MethodDecl(String id, List<Formal> formals, List<VarDecl> locals, List<Stm> body) {
+        this.id = id;
+        this.formals = Collections.unmodifiableList(formals);
+        this.locals = Collections.unmodifiableList(locals);
+        this.body = Collections.unmodifiableList(body);
     }
 
-    /**
-     * Gets the method name.
-     * @return the name of the method
-     */
-    public String getName() {
-        return name;
-    }
-
-    public boolean retType(){
-        return returnType != null;
+    public String getMethodName() {
+        return id;
     }
 
     public void compileBody(SymbolTable st) {
-        // Compile method body
-        for (Stm stm : getStatements()) {
-            stm.compile(st);
+        for (Stm s : body) {
+            s.compile(st);
         }
 
-        // Check if the last statement is already a return
-        boolean hasExplicitReturn = !getStatements().isEmpty() &&
-                getStatements().get(getStatements().size() - 1) instanceof StmReturn;
-
-        // If no explicit return, add one
-        if (!hasExplicitReturn) {
-            int paramCount = st.getParameterCount(getName());
-
-            if (returnType == null) {
-                // For void methods, push a dummy value
-                emit("push 0");
-            } else {
-                // For non-void methods with missing return, this is a compiler error
-                // but for now let's just return 0
-                emit("push 0");
-            }
-
-            // Add the parameter count for deallocation
-            emit("push " + paramCount);
+        if (this instanceof ProcDecl) {
+            emit("push 0");
+            int numParams = formals.size();
+            emit("push " + numParams);
             emit("ret");
         }
-    }
-
-    /**
-     * Gets the list of parameter declarations.
-     * @return an unmodifiable list of parameter declarations
-     */
-    public List<VarDecl> getParams() {
-        return Collections.unmodifiableList(params);
-    }
-
-    /**
-     * Gets the list of local variable declarations.
-     * @return an unmodifiable list of local variable declarations
-     */
-    public List<VarDecl> getLocals() {
-        return Collections.unmodifiableList(locals);
-    }
-
-    /**
-     * Gets the list of statements in the method body.
-     * @return an unmodifiable list of statements
-     */
-    public List<Stm> getStatements() {
-        return Collections.unmodifiableList(statements);
     }
 }

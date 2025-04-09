@@ -2,32 +2,30 @@ package ast;
 
 import compile.SymbolTable;
 import java.util.List;
+import java.util.Collections;
 
-/**
- * Method/procedure call statement.
- */
 public class StmMethodCall extends Stm {
-    public final String methodName;
-    public final List<Exp> arguments;
+    public final String id;
+    public final List<Exp> actuals;
 
-    public StmMethodCall(String methodName, List<Exp> arguments) {
-        this.methodName = methodName;
-        this.arguments = arguments;
+    public StmMethodCall(String id, List<Exp> actuals) {
+        this.id = id;
+        this.actuals = Collections.unmodifiableList(actuals);
     }
 
     @Override
     public void compile(SymbolTable st) {
-        for (int i = arguments.size() - 1; i >= 0; i--) {
-            arguments.get(i).compile(st);
+        for (Exp arg : actuals) {
+            arg.compile(st);
         }
+        emit("push " + actuals.size());
+        String methodLabel = st.getMethodLabel(id);
+        emit("calli " + methodLabel);
 
-        emit("call " + methodName);
-
-        if (!arguments.isEmpty()) {
-            emit("pop " + arguments.size());
+        if (st.getMethodReturnType(id) != null) {
+            emit("pop");
         }
     }
-
 
     @Override
     public <T> T accept(ast.util.Visitor<T> visitor) {

@@ -27,7 +27,7 @@ public class ExpMethodCall extends Exp {
         emit("push " + arguments.size());
 
         // Call the method
-        emit("calli " + st.methodLabel(methodName));
+        emit("calli " + st.getMethodLabel(methodName));
 
         // The return value is now on top of the stack
     }
