@@ -4,6 +4,7 @@ import ast.Program;
 import ast.Type;
 import ast.VarDecl;
 import ast.MethodDecl;
+import compile.Scope;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -16,6 +17,8 @@ public class SymbolTable {
     private Map<String, MethodScope> methodScopes;
     private int freshNameCounter;
     private Stack<String> methodContextStack; // Stack to track method context
+    private int recursionDepth = 0;
+    private static final int MAX_RECURSION_DEPTH = 1000;
 
     private static class MethodScope {
         final Type returnType;
@@ -39,7 +42,6 @@ public class SymbolTable {
         this.methodScopes = new HashMap<>();
         this.methodContextStack = new Stack<>();
 
-        // Initialize global variables
         for (VarDecl decl: program.varDecls) {
             this.globals.put(decl.name, decl.type);
         }
@@ -50,7 +52,6 @@ public class SymbolTable {
             }
             MethodScope scope = new MethodScope(method.returnType);
 
-            // Process parameters with indices
             int paramIndex = 0;
             for (VarDecl param : method.getParams()) {
                 if (scope.parameters.put(param.name, param.type) != null) {
@@ -59,7 +60,7 @@ public class SymbolTable {
                 scope.parameterIndices.put(param.name, paramIndex++);
             }
 
-            // Process local variables with indices
+
             int localIndex = 0;
             for (VarDecl local : method.getLocals()) {
                 if (scope.locals.put(local.name, local.type) != null) {
@@ -72,10 +73,13 @@ public class SymbolTable {
         }
     }
 
-    /**
-     * Push a method context onto the stack
-     */
+
     public void pushMethodContext(String methodName) {
+        recursionDepth++;
+        if (recursionDepth > MAX_RECURSION_DEPTH) {
+            throw new StaticAnalysisException("Maximum recursion depth exceeded: " + recursionDepth);
+        }
+
         if (!methodScopes.containsKey(methodName)) {
             throw new StaticAnalysisException("Attempting to enter unknown method context: " + methodName);
         }
@@ -86,6 +90,7 @@ public class SymbolTable {
      * Pop the current method context from the stack
      */
     public String popMethodContext() {
+        recursionDepth--;
         if (methodContextStack.isEmpty()) {
             throw new StaticAnalysisException("Attempting to exit method context when no context is active");
         }
@@ -102,65 +107,49 @@ public class SymbolTable {
         return methodContextStack.peek();
     }
 
-    /**
-     * Get the parameter index directly from the cached map for better performance
-     */
-    public int getParameterIndex(String methodName, String paramName) {
-        MethodScope scope = methodScopes.get(methodName);
-        if (scope == null) {
-            throw new StaticAnalysisException("Unknown method: " + methodName);
-        }
-        Integer index = scope.parameterIndices.get(paramName);
-        if (index == null) {
-            throw new StaticAnalysisException("Unknown parameter '" + paramName + "' in method '" + methodName + "'");
-        }
-        return index;
-    }
 
     /**
-     * Get the local variable index directly from the cached map for better performance
+     * Get variable scope information including scope type and offset
      */
-    public int getLocalIndex(String methodName, String localName) {
-        MethodScope scope = methodScopes.get(methodName);
-        if (scope == null) {
-            throw new StaticAnalysisException("Unknown method: " + methodName);
-        }
-        Integer index = scope.localIndices.get(localName);
-        if (index == null) {
-            throw new StaticAnalysisException("Unknown local variable '" + localName + "' in method '" + methodName + "'");
-        }
-        return index;
-    }
-
-    public Type getVarType(String name) {
+    public ScopeInfo getVarScopeInfo(String varName) {
         // First check if we're in a method scope
         if (!methodContextStack.isEmpty()) {
             String methodName = methodContextStack.peek();
             MethodScope scope = methodScopes.get(methodName);
 
             // Check parameters
-            if (scope.parameters.containsKey(name)) {
-                return scope.parameters.get(name);
+            if (scope.parameters.containsKey(varName)) {
+                int index = scope.parameterIndices.get(varName);
+                return new ScopeInfo(Scope.PARAMETER, index);
             }
 
             // Check locals
-            if (scope.locals.containsKey(name)) {
-                return scope.locals.get(name);
+            if (scope.locals.containsKey(varName)) {
+                int index = scope.localIndices.get(varName);
+                return new ScopeInfo(Scope.LOCAL, index);
             }
         }
 
-        // Fall back to global variables
-        Type t = globals.get(name);
-        if (t == null) {
-            throw new StaticAnalysisException("Undeclared variable: " + name);
+        // Check global variables
+        if (globals.containsKey(varName)) {
+            // For global variables, the offset is determined by the order in which they
+            // are declared, but it's stored at a global data segment
+            return new ScopeInfo(Scope.GLOBAL, 0); // Offset will be determined by label, not by direct index
         }
-        return t;
+
+        return null; // Variable not found in any scope
     }
 
+    /**
+     * Get all global variable names
+     */
     public Set<String> globalNames() {
         return new HashSet<>(globals.keySet());
     }
 
+    /**
+     * Get all parameter names for a method
+     */
     public Set<String> getMethodParameterNames(String methodName) {
         MethodScope scope = methodScopes.get(methodName);
         if (scope == null) {
@@ -169,6 +158,9 @@ public class SymbolTable {
         return new HashSet<>(scope.parameters.keySet());
     }
 
+    /**
+     * Get all local variable names for a method
+     */
     public Set<String> getMethodLocalNames(String methodName) {
         MethodScope scope = methodScopes.get(methodName);
         if (scope == null) {
@@ -177,6 +169,9 @@ public class SymbolTable {
         return new HashSet<>(scope.locals.keySet());
     }
 
+    /**
+     * Get number of parameters for a method
+     */
     public int getParameterCount(String methodName) {
         MethodScope scope = methodScopes.get(methodName);
         if (scope == null) {
@@ -185,6 +180,9 @@ public class SymbolTable {
         return scope.parameters.size();
     }
 
+    /**
+     * Get number of local variables for a method
+     */
     public int getLocalCount(String methodName) {
         MethodScope scope = methodScopes.get(methodName);
         if (scope == null) {
@@ -193,14 +191,35 @@ public class SymbolTable {
         return scope.locals.size();
     }
 
+    /**
+     * Get the number of local variables for the current method context
+     */
+    public int getLocalCountForCurrentMethod() {
+        if (methodContextStack.isEmpty()) {
+            return 0; // No method context active
+        }
+        String currentMethod = methodContextStack.peek();
+        return getLocalCount(currentMethod);
+    }
+
+
+    /**
+     * Create a variable label for code generation
+     */
     public static String makeVarLabel(String sourceName) {
         return "$_" + sourceName;
     }
 
+    /**
+     * Generate a fresh unique label with prefix
+     */
     public String freshLabel(String prefix) {
         return "$$_" + prefix + "_" + (freshNameCounter++);
     }
 
+    /**
+     * Create a method label for code generation
+     */
     public String methodLabel(String name) {
         return "$_" + name;
     }

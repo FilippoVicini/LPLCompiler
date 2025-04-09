@@ -1,4 +1,3 @@
-
 package ast;
 
 import compile.SymbolTable;
@@ -38,24 +37,39 @@ public class MethodDecl extends AST {
         return name;
     }
 
+    public boolean retType(){
+        return returnType != null;
+    }
+
     public void compileBody(SymbolTable st) {
-        // Compile all statements in the method body
-        for (Stm stm : statements) {
+        // Compile method body
+        for (Stm stm : getStatements()) {
             stm.compile(st);
         }
 
-        // Check if the last statement is a return
-        boolean hasExplicitReturn = !statements.isEmpty() && statements.get(statements.size() - 1) instanceof StmReturn;
+        // Check if the last statement is already a return
+        boolean hasExplicitReturn = !getStatements().isEmpty() &&
+                getStatements().get(getStatements().size() - 1) instanceof StmReturn;
 
-        // If the method doesn't end with a return, add a default one
+        // If no explicit return, add one
         if (!hasExplicitReturn) {
-            // Default return value
-            emit("push 0");
+            int paramCount = st.getParameterCount(getName());
 
-            // Return from method
+            if (returnType == null) {
+                // For void methods, push a dummy value
+                emit("push 0");
+            } else {
+                // For non-void methods with missing return, this is a compiler error
+                // but for now let's just return 0
+                emit("push 0");
+            }
+
+            // Add the parameter count for deallocation
+            emit("push " + paramCount);
             emit("ret");
         }
     }
+
     /**
      * Gets the list of parameter declarations.
      * @return an unmodifiable list of parameter declarations
@@ -79,6 +93,4 @@ public class MethodDecl extends AST {
     public List<Stm> getStatements() {
         return Collections.unmodifiableList(statements);
     }
-
-
 }
