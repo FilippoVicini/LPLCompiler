@@ -11,7 +11,7 @@ public class StmReturn extends Stm {
 
     @Override
     public void compile(SymbolTable st) {
-        if (st.isInMethodScope()) {
+        if (st.isInMethod()) {
             if (exp != null) {
                 exp.compile(st);
             } else {

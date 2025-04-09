@@ -3,44 +3,40 @@ package ast;
 import compile.VarInfo;
 import compile.SymbolTable;
 
+import java.util.Objects;
+
 import static compile.SymbolTable.*;
 
 public class ExpVar extends Exp {
 
     public final String varName;
 
-    public ExpVar(String varName) {
-        this.varName = varName;
+    public ExpVar(String name) {
+        this.varName = name;
     }
 
     @Override
     public void compile(SymbolTable st) {
-        VarInfo info = st.getVarScopeInfo(varName);
+        VarInfo i = st.getVarInfo(varName);
 
-        switch (info.getVarInfo()) {
-            case INFO_GLOBALS:
-                emit("get_dp");
-                emit("push " + info.getOffset());
-                emit("add");
-                emit("load");
-                break;
+        if(Objects.equals(i.getVarInfo(), INFO_GLOBALS))
+        {
+            emit("get_dp");
+            emit("push " + i.getOffset());
+            emit("add");
+            emit("load");
 
-            case INFO_LOCALS:
-                emit("get_fp");
-                emit("push " + (-4 * info.getOffset()));
-                emit("add");
-                emit("load");
-                break;
+        } else if (Objects.equals(i.getVarInfo(), INFO_LOCALS)) {
+            emit("get_fp");
+            emit("push " + (-4 * i.getOffset()));
+            emit("add");
+            emit("load");
 
-            case INFO_PARAMETERS:
-                emit("get_fp");
-                emit("push " + (4 * info.getOffset()));
-                emit("add");
-                emit("load");
-                break;
-
-            default:
-                throw new Error("Undefined variable or scope error during compile: " + varName);
+        } else {
+            emit("get_fp");
+            emit("push " + (4 * i.getOffset()));
+            emit("add");
+            emit("load");
         }
     }
 

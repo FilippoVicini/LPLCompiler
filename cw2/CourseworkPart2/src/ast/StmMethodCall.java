@@ -22,7 +22,7 @@ public class StmMethodCall extends Stm {
         String methodLabel = st.getMethodLabel(id);
         emit("calli " + methodLabel);
 
-        if (st.getMethodReturnType(id) != null) {
+        if (st.getMethodRetType(id) != null) {
             emit("pop");
         }
     }

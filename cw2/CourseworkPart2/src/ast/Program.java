@@ -27,7 +27,7 @@ public class Program extends AST {
         SymbolTable st = new SymbolTable(this);
 
         for (VarDecl globalVar : varDecls) {
-            VarInfo info = st.getVarScopeInfo(globalVar.name);
+            VarInfo info = st.getVarInfo(globalVar.name);
             if (info != null && info.getVarInfo() == INFO_GLOBALS) {
                 emit("push 0");
                 emit("get_dp");

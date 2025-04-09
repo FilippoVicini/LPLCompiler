@@ -18,18 +18,17 @@ public class ExpMethodCall extends Exp {
 
     @Override
     public void compile(SymbolTable st) {
-        // Push arguments onto the stack in reverse order (right-to-left)
+
         for (int i = arguments.size() - 1; i >= 0; i--) {
             arguments.get(i).compile(st);
         }
 
-        // Push the number of arguments
+
         emit("push " + arguments.size());
 
-        // Call the method
+
         emit("calli " + st.getMethodLabel(methodName));
 
-        // The return value is now on top of the stack
     }
 
     @Override

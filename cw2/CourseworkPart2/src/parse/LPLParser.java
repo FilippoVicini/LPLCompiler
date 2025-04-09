@@ -183,11 +183,12 @@ public class LPLParser {
         lex.eat("RCBR");
 
         if (isFunc) {
-            return new FunDecl(returnType, methodName, formals, nonFormalVars, statements);
+            return new MethodDecl(methodName, returnType, formals, nonFormalVars, statements);
         } else {
-            return new ProcDecl(methodName, formals, nonFormalVars, statements);
-        }
+            // For procedures, use the constructor without return type
+            return new MethodDecl(methodName, formals, nonFormalVars, statements);
     }
+        }
 
     /**
      * Method to handle parameters for the method

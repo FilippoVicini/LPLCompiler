@@ -3,6 +3,8 @@ package ast;
 import compile.SymbolTable;
 import compile.VarInfo;
 
+import java.util.Objects;
+
 import static compile.SymbolTable.*;
 
 public class StmAssign extends Stm {
@@ -19,37 +21,30 @@ public class StmAssign extends Stm {
     public void compile(SymbolTable st) {
         exp.compile(st);
 
-        VarInfo info = st.getVarScopeInfo(varName);
+        VarInfo i = st.getVarInfo(varName);
 
-        switch (info.getVarInfo()) {
-            case INFO_GLOBALS:
-                emit("get_dp");
-                emit("push " + info.getOffset());
-                emit("add");
-                emit("swap");
-                emit("store");
-                break;
-
-            case INFO_LOCALS:
-                emit("get_fp");
-                emit("push " + (-4 * info.getOffset()));
-                emit("add");
-                emit("swap");
-                emit("store");
-                break;
-
-            case INFO_PARAMETERS:
-                emit("get_fp");
-                emit("push " + (4 * info.getOffset()));
-                emit("add");
-                emit("swap");
-                emit("store");
-                break;
-
-            default:
-                throw new Error("Undefined variable or scope error during assignment: " + varName);
+        if(Objects.equals(st.getVarInfo(varName).getVarInfo(), INFO_GLOBALS)) {
+            emit("get_dp");
+            emit("push " + i.getOffset());
+            emit("add");
+            emit("swap");
+            emit("store");
+        }else if(Objects.equals(st.getVarInfo(varName).getVarInfo(), INFO_LOCALS)) {
+            emit("get_fp");
+            emit("push " + (-4 * i.getOffset()));
+            emit("add");
+            emit("swap");
+            emit("store");
+        }else {
+            emit("get_fp");
+            emit("push " + (4 * i.getOffset()));
+            emit("add");
+            emit("swap");
+            emit("store");
         }
-    }
+
+        }
+
 
     @Override
     public <T> T accept(ast.util.Visitor<T> visitor) {

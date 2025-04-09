@@ -14,8 +14,6 @@ public class ExpNewArray extends Exp {
     /**
      * Constructs a new array expression.
      *
-     * @param baseType The base type of the array
-     * @param dimensions List of expressions representing array dimensions
      */
     public ExpNewArray(Type baseType, List<Exp> dimensions) {
         this.baseType = baseType;
@@ -24,16 +22,14 @@ public class ExpNewArray extends Exp {
 
     @Override
     public void compile(SymbolTable st) {
-        // Calculate and push each dimension size
+
         for (Exp dimension : dimensions) {
             dimension.compile(st);
             emit("push");
         }
 
-        // Allocate the array with the given dimensions
         emit("new_array " + dimensions.size());
 
-        // The result will be the array reference
     }
 
     @Override

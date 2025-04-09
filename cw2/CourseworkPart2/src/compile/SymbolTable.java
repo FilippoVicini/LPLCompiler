@@ -1,7 +1,6 @@
 package compile;
 
 import ast.*;
-import compile.MethodsInfo;
 
 import java.util.*;
 
@@ -20,37 +19,30 @@ public class SymbolTable {
 
     private final Map<String, GlobalsInfo> globals;
     private final Map<String, MethodsInfo> methods;
-    private String currentMethodName;
+    private String currMethodName;
     private int freshNameCounter;
 
     /**
-     * Initializes a new symbol table.
-     * @param program the program to analyze
-     * @throws StaticAnalysisException if there are duplicate declarations or other static errors
+     * Constructor
      */
-    public Symbols(Program program) {
+    public SymbolTable(Program program) {
         this.freshNameCounter = 0;
         this.globals = new HashMap<>();
         this.methods = new HashMap<>();
-        this.currentMethodName = null;
+        this.currMethodName = null;
 
-        initializeGlobalVariables(program.varDecls);
-        initializeMethods(program.methods);
+        initGlobalVars(program.varDecls);
+        initMethods(program.methods);
     }
 
     /**
      * Initializes global variables in the symbol table.
      *
-     * @param varDecls the list of variable declarations
-     * @throws StaticAnalysisException if there are duplicate global variables
      */
-    private void initializeGlobalVariables(List<VarDecl> varDecls) {
+    private void initGlobalVars(List<VarDecl> decls) {
         int nextGlobalAddress = 0;
 
-        for (VarDecl decl: varDecls) {
-            if (globals.containsKey(decl.name)) {
-                throw new StaticAnalysisException("Duplicate global variable: " + decl.name);
-            }
+        for (VarDecl decl: decls) {
             GlobalsInfo info = new GlobalsInfo(decl.type, nextGlobalAddress);
             this.globals.put(decl.name, info);
             nextGlobalAddress += 4;
@@ -63,15 +55,12 @@ public class SymbolTable {
      *
      * @throws StaticAnalysisException if there are duplicate method names
      */
-    private void initializeMethods(List<MethodDecl> met) {
+    private void initMethods(List<MethodDecl> met) {
         for (MethodDecl methodDecl : met) {
             String name = methodDecl.getMethodName();
-            if (methods.containsKey(name)) {
-                throw new StaticAnalysisException("Duplicate method name: " + name);
-            }
 
-            Type returnType = methodDecl instanceof FunDecl ?
-                    ((FunDecl) methodDecl).returnType : null;
+            // Use the returnType field directly from MethodDecl
+            Type returnType = methodDecl.returnType;
 
             MethodsInfo info = new MethodsInfo(name, returnType, methodDecl.formals, methodDecl.locals);
             methods.put(name, info);
@@ -85,25 +74,25 @@ public class SymbolTable {
      * @return scope information for the variable
      * @throws StaticAnalysisException if the variable is not declared
      */
-    public VarInfo getVarScopeInfo(String varName) {
+    public VarInfo getVarInfo(String varName) {
         // Check local and parameter scope if in a method
-        if (isInMethodScope()) {
-            MethodsInfo currentMethod = methods.get(currentMethodName);
+        if (isInMethod()) {
+            MethodsInfo currentMethod = methods.get(currMethodName);
 
-            // Check local variables first
+
             Integer localOffset = currentMethod.getLocalOffset(varName);
             if (localOffset != null) {
                 return new VarInfo(INFO_LOCALS, localOffset, currentMethod.getLocalType(varName));
             }
 
-            // Check parameters next
+
             Integer paramOffset = currentMethod.getParamOffset(varName);
             if (paramOffset != null) {
                 return new VarInfo(INFO_PARAMETERS, paramOffset, currentMethod.getParamType(varName));
             }
         }
 
-        // Check global scope
+
         GlobalsInfo globalInfo = globals.get(varName);
         if (globalInfo != null) {
             return new VarInfo(INFO_GLOBALS, globalInfo.getAddress(), globalInfo.type);
@@ -120,9 +109,6 @@ public class SymbolTable {
      * @throws StaticAnalysisException if the method is not defined
      */
     public String getMethodLabel(String methodName) {
-        if (!methods.containsKey(methodName)) {
-            throw new StaticAnalysisException("Call to undefined method: " + methodName);
-        }
         return "$_" + methodName;
     }
 
@@ -133,18 +119,14 @@ public class SymbolTable {
      * @throws StaticAnalysisException if the method is not defined
      */
     public void enterMethodScope(String methodName) {
-        if (!methods.containsKey(methodName)) {
-            throw new StaticAnalysisException(
-                    "Internal Compiler Error: Entering scope for unknown method: " + methodName);
-        }
-        this.currentMethodName = methodName;
+        this.currMethodName = methodName;
     }
 
     /**
      * Exits the current method scope.
      */
     public void exitMethodScope() {
-        this.currentMethodName = null;
+        this.currMethodName = null;
     }
 
     /**
@@ -154,8 +136,7 @@ public class SymbolTable {
      * @throws IllegalStateException if not in a method scope
      */
     public int getParamCountForCurrentMethod() {
-        checkMethodScope("Cannot get parameter count outside of a method scope.");
-        MethodsInfo currentMethod = methods.get(currentMethodName);
+        MethodsInfo currentMethod = methods.get(currMethodName);
         return currentMethod.getParamCount();
     }
 
@@ -166,21 +147,8 @@ public class SymbolTable {
      * @throws IllegalStateException if not in a method scope
      */
     public int getLocalCountForCurrentMethod() {
-        checkMethodScope("Cannot get local variable count outside of a method scope.");
-        MethodsInfo currentMethod = methods.get(currentMethodName);
+        MethodsInfo currentMethod = methods.get(currMethodName);
         return currentMethod.getLocalCount();
-    }
-
-    /**
-     * Checks if the current context is within a method scope.
-     *
-     * @param errorMessage the error message to throw if not in a method scope
-     * @throws IllegalStateException if not in a method scope
-     */
-    private void checkMethodScope(String errorMessage) {
-        if (!isInMethodScope()) {
-            throw new IllegalStateException(errorMessage);
-        }
     }
 
     /**
@@ -190,7 +158,7 @@ public class SymbolTable {
      * @return the return type of the method
      * @throws StaticAnalysisException if the method is not defined
      */
-    public Type getMethodReturnType(String methodName) {
+    public Type getMethodRetType(String methodName) {
         MethodsInfo info = methods.get(methodName);
         if (info == null) {
             throw new StaticAnalysisException("Call to undefined method: " + methodName);
@@ -203,8 +171,8 @@ public class SymbolTable {
      *
      * @return true if in a method scope, false otherwise
      */
-    public boolean isInMethodScope() {
-        return this.currentMethodName != null;
+    public boolean isInMethod() {
+        return this.currMethodName != null;
     }
 
     /**
