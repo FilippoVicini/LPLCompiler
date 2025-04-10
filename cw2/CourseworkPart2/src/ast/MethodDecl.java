@@ -6,7 +6,7 @@ import java.util.Collections;
 
 public class MethodDecl extends AST {
     public final String id;
-    public final List<Formal> formals;
+    public final List<VarDecl> formals;
     public final List<VarDecl> locals;
     public final List<Stm> body;
     public final Type returnType;
@@ -16,7 +16,7 @@ public class MethodDecl extends AST {
      * Creates a new method declaration (either function or procedure).
      *
      */
-    public MethodDecl(String id, Type returnType, List<Formal> formals, List<VarDecl> locals, List<Stm> body) {
+    public MethodDecl(String id, Type returnType, List<VarDecl> formals, List<VarDecl> locals, List<Stm> body) {
         this.id = id;
         this.returnType = returnType;
         this.isFunction = (returnType != null);
@@ -29,7 +29,7 @@ public class MethodDecl extends AST {
      * Creates a new procedure declaration (no return type).
      *
      */
-    public MethodDecl(String id, List<Formal> formals, List<VarDecl> locals, List<Stm> body) {
+    public MethodDecl(String id, List<VarDecl> formals, List<VarDecl> locals, List<Stm> body) {
         this(id, null, formals, locals, body);
     }
 

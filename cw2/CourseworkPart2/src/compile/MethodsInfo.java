@@ -1,6 +1,5 @@
 package compile;
 
-import ast.Formal;
 import ast.Type;
 import ast.VarDecl;
 
@@ -15,12 +14,12 @@ public class MethodsInfo {
 
     public final String methodName;
     public final Type returnType;
-    private final List<Formal> params;
+    private final List<VarDecl> params;
     private final List<VarDecl> lcls;
     private final Map<String, Integer> paramOffsets;
     private final Map<String, Integer> localOffsets;
 
-    public MethodsInfo(String name, Type retType, List<Formal> params, List<VarDecl> localDecls) {
+    public MethodsInfo(String name, Type retType, List<VarDecl> params, List<VarDecl> localDecls) {
         this.methodName = name;
         this.returnType = retType;
         this.params = Collections.unmodifiableList(new ArrayList<>(params));
@@ -43,9 +42,9 @@ public class MethodsInfo {
         }
     }
 
-    private void initParams(List<Formal> params) {
+    private void initParams(List<VarDecl> params) {
         int paramOffsetCounter = 1;
-        for (Formal p : params) {
+        for (VarDecl p : params) {
             paramOffsets.put(p.name, paramOffsetCounter++);
             pTypes.put(p.name, p.type);
         }

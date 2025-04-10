@@ -158,10 +158,6 @@ public class VisitorAdapter<T> implements Visitor<T> {
     public T visit(MethodDecl methodDecl) {
         return null;
     }
-    @Override
-    public T visit(Formal formal) {
-        return null;
-    }
 
 
 

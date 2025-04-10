@@ -165,7 +165,7 @@ public class LPLParser {
 
         lex.eat("LBR");
 
-        List < Formal > formals = formals();
+        List < VarDecl > formals = formals();
 
         lex.eat("RBR");
         lex.eat("LCBR");
@@ -193,18 +193,18 @@ public class LPLParser {
     /**
      * Method to handle parameters for the method
      */
-    private List < Formal > formals() {
-        List < Formal > params = new ArrayList < > ();
+    private List < VarDecl > formals() {
+        List < VarDecl > params = new ArrayList < > ();
         if (!lex.tok().type.equals("INT_TYPE")) {
             return params;
         }
 
         Type t = type();
         String id = lex.eat("ID");
-        params.add(new Formal(t, id));
+        params.add(new VarDecl(t, id));
 
         while (lex.tok().type.equals("COMMA")) {
-            Formal param = AnotherFormal();
+            VarDecl param = AnotherFormal();
             params.add(param);
         }
         return params;
@@ -212,11 +212,11 @@ public class LPLParser {
     /**
      * Method to handle multiple parameters in the method
      */
-    private Formal AnotherFormal() {
+    private VarDecl AnotherFormal() {
         lex.eat("COMMA");
         Type t = type();
         String id = lex.eat("ID");
-        return new Formal(t, id);
+        return new VarDecl(t, id);
     }
     /**
      * Method to manage both method calls and vars assignments
